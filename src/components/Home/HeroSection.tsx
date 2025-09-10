@@ -61,7 +61,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <section ref={containerRef} className="relative min-h-screen overflow-hidden bg-gradient-tech">
+    <section ref={containerRef} className="relative min-h-screen overflow-hidden bg-gradient-tech z-10">
       {/* Animated Background */}
       <div className="absolute inset-0 tech-pattern opacity-30" />
       
@@ -92,7 +92,7 @@ export default function HeroSection() {
       {/* Hero Content */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 h-full flex items-center pt-32 pb-20"
+        className="relative z-20 h-full flex items-center pt-32 pb-20"
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">

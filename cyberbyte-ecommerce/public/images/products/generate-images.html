@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CyberByte Product Images Generator</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #0a0a0a; 
+            color: white; 
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-card {
+            width: 400px;
+            height: 300px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+        }
+        .product-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+            z-index: 1;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            z-index: 1;
+            color: #ffffff;
+        }
+        .product-category {
+            font-size: 14px;
+            color: #00d4ff;
+            text-align: center;
+            z-index: 1;
+        }
+        .product-price {
+            font-size: 16px;
+            color: #8b5cf6;
+            text-align: center;
+            margin-top: 10px;
+            z-index: 1;
+            font-weight: bold;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+        .instructions {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #00d4ff;
+        }
+        .instructions h2 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+        .instructions ol {
+            line-height: 1.6;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #00d4ff; margin-bottom: 30px;">CyberByte Product Images Generator</h1>
+        
+        <div class="instructions">
+            <h2>Instructions:</h2>
+            <ol>
+                <li>Right-click on each product card below</li>
+                <li>Select "Save image as..." or "Copy image"</li>
+                <li>Save the images in the <code>public/images/products/</code> folder</li>
+                <li>Name them according to the product IDs (e.g., alienware-x17-r2.jpg)</li>
+                <li>Use the same naming convention for gallery images (e.g., alienware-x17-r2-2.jpg)</li>
+            </ol>
+        </div>
+
+        <div class="grid">
+            <!-- Laptops -->
+            <div class="product-card" id="alienware-x17-r2">
+                <div class="product-icon">💻</div>
+                <div class="product-name">Alienware X17 R2</div>
+                <div class="product-category">Gaming Laptop</div>
+                <div class="product-price">$2,499</div>
+            </div>
+            
+            <div class="product-card" id="asus-rog-strix-g15">
+                <div class="product-icon">💻</div>
+                <div class="product-name">ASUS ROG Strix G15</div>
+                <div class="product-category">Gaming Laptop</div>
+                <div class="product-price">$1,899</div>
+            </div>
+            
+            <div class="product-card" id="macbook-pro-16">
+                <div class="product-icon">💻</div>
+                <div class="product-name">MacBook Pro 16"</div>
+                <div class="product-category">Professional Laptop</div>
+                <div class="product-price">$3,299</div>
+            </div>
+            
+            <div class="product-card" id="razer-blade-15">
+                <div class="product-icon">💻</div>
+                <div class="product-name">Razer Blade 15</div>
+                <div class="product-category">Gaming Laptop</div>
+                <div class="product-price">$2,199</div>
+            </div>
+            
+            <div class="product-card" id="msi-ge76-raider">
+                <div class="product-icon">💻</div>
+                <div class="product-name">MSI GE76 Raider</div>
+                <div class="product-category">Gaming Laptop</div>
+                <div class="product-price">$1,999</div>
+            </div>
+            
+            <div class="product-card" id="dell-xps-15">
+                <div class="product-icon">💻</div>
+                <div class="product-name">Dell XPS 15</div>
+                <div class="product-category">Professional Laptop</div>
+                <div class="product-price">$1,799</div>
+            </div>
+            
+            <!-- Accessories -->
+            <div class="product-card" id="corsair-k95-rgb">
+                <div class="product-icon">⌨️</div>
+                <div class="product-name">Corsair K95 RGB</div>
+                <div class="product-category">Mechanical Keyboard</div>
+                <div class="product-price">$199</div>
+            </div>
+            
+            <div class="product-card" id="logitech-mx-master-3s">
+                <div class="product-icon">🖱️</div>
+                <div class="product-name">Logitech MX Master 3S</div>
+                <div class="product-category">Wireless Mouse</div>
+                <div class="product-price">$99</div>
+            </div>
+            
+            <!-- Components -->
+            <div class="product-card" id="intel-core-i9-13900k">
+                <div class="product-icon">🔧</div>
+                <div class="product-name">Intel Core i9-13900K</div>
+                <div class="product-category">CPU Processor</div>
+                <div class="product-price">$599</div>
+            </div>
+            
+            <div class="product-card" id="nvidia-rtx-4090">
+                <div class="product-icon">🎮</div>
+                <div class="product-name">NVIDIA RTX 4090</div>
+                <div class="product-category">Graphics Card</div>
+                <div class="product-price">$1,599</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add click handlers for easy copying
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.id;
+                console.log(`Save this image as: ${id}.jpg`);
+                alert(`Save this image as: ${id}.jpg`);
+            });
+        });
+        
+        console.log('Product Images Generator Ready!');
+        console.log('Click on any product card to get the filename.');
+    </script>
+</body>
+</html>

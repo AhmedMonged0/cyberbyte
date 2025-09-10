@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Image Generator</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .product-card {
+            width: 400px;
+            height: 300px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+        }
+        .product-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+            z-index: 1;
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            z-index: 1;
+        }
+        .product-category {
+            font-size: 14px;
+            color: #00d4ff;
+            text-align: center;
+            z-index: 1;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CyberByte Product Images</h1>
+    <div class="grid">
+        <!-- Laptops -->
+        <div class="product-card">
+            <div class="product-icon">💻</div>
+            <div class="product-name">Alienware X17 R2</div>
+            <div class="product-category">Gaming Laptop</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">💻</div>
+            <div class="product-name">ASUS ROG Strix G15</div>
+            <div class="product-category">Gaming Laptop</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">💻</div>
+            <div class="product-name">MacBook Pro 16"</div>
+            <div class="product-category">Professional Laptop</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">💻</div>
+            <div class="product-name">Razer Blade 15</div>
+            <div class="product-category">Gaming Laptop</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">💻</div>
+            <div class="product-name">MSI GE76 Raider</div>
+            <div class="product-category">Gaming Laptop</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">💻</div>
+            <div class="product-name">Dell XPS 15</div>
+            <div class="product-category">Professional Laptop</div>
+        </div>
+        
+        <!-- Accessories -->
+        <div class="product-card">
+            <div class="product-icon">⌨️</div>
+            <div class="product-name">Corsair K95 RGB</div>
+            <div class="product-category">Mechanical Keyboard</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">🖱️</div>
+            <div class="product-name">Logitech MX Master 3S</div>
+            <div class="product-category">Wireless Mouse</div>
+        </div>
+        
+        <!-- Components -->
+        <div class="product-card">
+            <div class="product-icon">🔧</div>
+            <div class="product-name">Intel Core i9-13900K</div>
+            <div class="product-category">CPU Processor</div>
+        </div>
+        <div class="product-card">
+            <div class="product-icon">🎮</div>
+            <div class="product-name">NVIDIA RTX 4090</div>
+            <div class="product-category">Graphics Card</div>
+        </div>
+    </div>
+    
+    <script>
+        // Instructions for generating images
+        console.log('To generate product images:');
+        console.log('1. Take screenshots of each product card');
+        console.log('2. Save them as JPG files in the public/images/products/ folder');
+        console.log('3. Name them according to the product IDs in productImages.ts');
+    </script>
+</body>
+</html>

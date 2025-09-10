@@ -51,7 +51,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-[9998] transition-all duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-[9998] transition-all duration-300 ${
         isScrolled 
           ? 'glass-card backdrop-blur-md shadow-neon' 
           : 'bg-primary-black/90 backdrop-blur-sm'
@@ -105,7 +105,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                   ▼
                 </motion.div>
               </button>
-              <div className="absolute top-full left-0 mt-2 w-48 glass-card rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[9999] pointer-events-none group-hover:pointer-events-auto transform translate-y-0">
+              <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-48 glass-card rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[9999] pointer-events-none group-hover:pointer-events-auto mt-2">
                 <div className="py-2">
                   {categories.map((category) => (
                     <Link

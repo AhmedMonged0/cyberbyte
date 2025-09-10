@@ -12,7 +12,6 @@ import {
   ShoppingCart,
   Eye
 } from 'lucide-react';
-// import Link from 'next/link';
 
 interface Product {
   id: number;

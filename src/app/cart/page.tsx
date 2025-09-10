@@ -30,7 +30,6 @@ interface CartItem {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  // const [checkoutStep, setCheckoutStep] = useState(1);
 
   useEffect(() => {
     // Load cart from localStorage

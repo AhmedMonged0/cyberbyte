@@ -4,15 +4,12 @@ import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   Star, 
-  Heart, 
   ShoppingCart, 
-  Eye, 
   ChevronLeft, 
   ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
 import ProductImage from '../ProductImage';
-import { getProductImage, getFallbackImage } from '@/data/productImages';
 
 export default function FeaturedProducts() {
   const [currentSlide, setCurrentSlide] = useState(0);

@@ -92,26 +92,25 @@ export default function HeroSection() {
       {/* Hero Content */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 h-full flex items-center"
+        className="relative z-10 h-full flex items-center pt-32 pb-20"
       >
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               className="space-y-8"
             >
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="text-4xl lg:text-6xl font-orbitron font-bold leading-tight mb-6"
+                  className="text-5xl lg:text-7xl font-orbitron font-bold leading-tight mb-8"
                 >
-                  <span className="text-white block mb-2">{heroSlides[currentSlide].title}</span>
-                  <span className="text-gradient-neon block">
+                  <span className="text-white block mb-4">{heroSlides[currentSlide].title}</span>
+                  <span className="text-gradient-neon block text-3xl lg:text-4xl font-light">
                     {heroSlides[currentSlide].subtitle}
                   </span>
                 </motion.h1>
@@ -120,7 +119,7 @@ export default function HeroSection() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  className="text-xl text-text-secondary max-w-lg"
+                  className="text-xl lg:text-2xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-8"
                 >
                   {heroSlides[currentSlide].description}
                 </motion.p>
@@ -131,7 +130,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="flex flex-wrap gap-4"
+                className="flex flex-wrap justify-center gap-3 mb-12"
               >
                 {heroSlides[currentSlide].features.map((feature, index) => (
                   <motion.span
@@ -139,9 +138,9 @@ export default function HeroSection() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
-                    className="px-4 py-2 bg-accent-gray/50 border border-accent-blue/30 rounded-full text-sm text-accent-blue"
+                    className="px-6 py-3 bg-gradient-to-r from-accent-blue/10 to-accent-purple/10 border border-accent-blue/40 rounded-full text-sm font-medium text-accent-blue backdrop-blur-sm hover:border-accent-blue/60 transition-all duration-300"
                   >
-                    {feature}
+                    ✨ {feature}
                   </motion.span>
                 ))}
               </motion.div>
@@ -151,7 +150,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
               >
                 <Link href="/products">
                 <motion.button
@@ -179,7 +178,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 1 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-16 pb-8"
               >
                 {stats.map((stat, index) => (
               <motion.div
@@ -187,69 +186,18 @@ export default function HeroSection() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 1.2 + index * 0.1 }}
-                className="text-center glass-card p-4 rounded-xl hover-lift"
+                className="text-center bg-gradient-to-br from-accent-gray/20 to-accent-gray/10 backdrop-blur-sm border border-accent-blue/20 p-6 rounded-2xl hover:border-accent-blue/40 hover:bg-accent-blue/5 transition-all duration-300 group"
               >
-                <div className="w-12 h-12 mx-auto mb-3 bg-gradient-neon rounded-full flex items-center justify-center shadow-neon">
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-accent-blue/25 transition-all duration-300">
+                  <stat.icon className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-text-secondary">{stat.label}</div>
+                <div className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{stat.value}</div>
+                <div className="text-sm text-text-secondary font-medium">{stat.label}</div>
               </motion.div>
                 ))}
               </motion.div>
             </motion.div>
 
-            {/* Right Content - Product Image */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="relative w-full h-96 lg:h-[500px]">
-                <motion.div
-                  key={currentSlide}
-                  initial={{ opacity: 0, scale: 0.8, rotateY: 45 }}
-                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="relative w-full h-full"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 rounded-2xl blur-3xl" />
-                  <div className="relative w-full h-full bg-accent-gray rounded-2xl overflow-hidden border border-accent-blue/30">
-                    <div className="w-full h-full bg-gradient-to-br from-accent-gray to-primary-black-secondary flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full flex items-center justify-center">
-                          <span className="text-4xl font-orbitron font-bold">B</span>
-                        </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
-                          {heroSlides[currentSlide].title}
-                        </h3>
-                        <p className="text-text-secondary">
-                          High-quality product image
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Floating Cards */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-r from-accent-blue to-accent-purple rounded-lg flex items-center justify-center text-white font-bold text-sm"
-              >
-                New
-              </motion.div>
-              
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                className="absolute -bottom-4 -left-4 w-16 h-16 bg-accent-gray border border-accent-blue/30 rounded-lg flex items-center justify-center"
-              >
-                <Star className="w-6 h-6 text-accent-blue" />
-              </motion.div>
-            </motion.div>
           </div>
         </div>
       </motion.div>

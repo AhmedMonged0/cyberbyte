@@ -152,14 +152,14 @@ export default function FeaturedProducts() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-6xl font-orbitron font-bold mb-6">
-            <span className="text-white">Featured</span>
+          <h2 className="text-5xl lg:text-7xl font-orbitron font-bold mb-8">
+            <span className="text-white bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Featured</span>
             <br />
-            <span className="bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-accent-blue via-accent-purple to-accent-blue bg-clip-text text-transparent text-4xl lg:text-5xl font-light">
               Products
             </span>
           </h2>
-          <p className="text-xl text-text-secondary max-w-3xl mx-auto">
+          <p className="text-xl lg:text-2xl text-text-secondary max-w-4xl mx-auto leading-relaxed font-light">
             Discover our handpicked selection of premium computer products, 
             featuring the latest technology and unbeatable performance.
           </p>

@@ -27,6 +27,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +36,16 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isCategoriesOpen && !(event.target as Element).closest('.categories-dropdown')) {
+        setIsCategoriesOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isCategoriesOpen]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,23 +105,35 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
             </Link>
             
             {/* Categories Dropdown */}
-            <div className="relative group">
-              <button className="text-text-secondary hover:text-accent-blue transition-colors duration-300 font-medium flex items-center space-x-1">
+            <div className="relative categories-dropdown">
+              <button 
+                onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                className="text-text-secondary hover:text-accent-blue transition-colors duration-300 font-medium flex items-center space-x-1"
+              >
                 Categories
                 <motion.div
-                  animate={{ rotate: 180 }}
+                  animate={{ rotate: isCategoriesOpen ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
                   className="w-4 h-4"
                 >
                   ▼
                 </motion.div>
               </button>
-              <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-48 glass-card rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[9999] pointer-events-none group-hover:pointer-events-auto mt-2">
+              <AnimatePresence>
+                {isCategoriesOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed top-16 left-1/2 transform -translate-x-1/2 w-48 glass-card rounded-lg shadow-xl z-[9999] mt-2"
+                  >
                 <div className="py-2">
                   {categories.map((category) => (
                     <Link
                       key={category.name}
                       href={category.href}
+                      onClick={() => setIsCategoriesOpen(false)}
                       className="flex items-center space-x-3 px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
                     >
                       <category.icon className="w-4 h-4" />
@@ -118,7 +141,9 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                     </Link>
                   ))}
                 </div>
-              </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </nav>
 

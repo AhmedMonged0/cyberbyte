@@ -30,7 +30,7 @@ interface CartItem {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState(1);
+  // const [checkoutStep, setCheckoutStep] = useState(1);
 
   useEffect(() => {
     // Load cart from localStorage
@@ -106,7 +106,7 @@ export default function CartPage() {
 
   const handleCheckout = () => {
     setIsCheckingOut(true);
-    setCheckoutStep(1);
+    // setCheckoutStep(1);
   };
 
   const getBadgeColor = (discount?: number) => {
@@ -133,7 +133,7 @@ export default function CartPage() {
               Your Cart is Empty
             </h1>
             <p className="text-xl text-text-secondary mb-8 max-w-md mx-auto">
-              Looks like you haven't added any items to your cart yet. Start shopping to fill it up!
+              Looks like you haven&apos;t added any items to your cart yet. Start shopping to fill it up!
             </p>
             <Link href="/products">
               <motion.button

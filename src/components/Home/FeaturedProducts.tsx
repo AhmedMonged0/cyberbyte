@@ -8,10 +8,7 @@ import {
   ShoppingCart, 
   Eye, 
   ChevronLeft, 
-  ChevronRight,
-  Zap,
-  Shield,
-  Award
+  ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
 import ProductImage from '../ProductImage';
@@ -217,7 +214,7 @@ export default function FeaturedProducts() {
                             {/* Product Image */}
                             <div className="relative h-48 overflow-hidden">
                               <ProductImage
-                                src={getProductImage(product.category, product.productId)?.main || getFallbackImage(product.category)}
+                                src={product.image}
                                 alt={product.name}
                                 name={product.name}
                                 className="w-full h-full"

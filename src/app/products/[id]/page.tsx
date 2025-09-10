@@ -14,8 +14,7 @@ import {
   ChevronRight,
   Plus,
   Minus,
-  Check,
-  X
+  Check
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -47,7 +46,7 @@ export default function ProductDetailsPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [selectedSpec, setSelectedSpec] = useState<string | null>(null);
+  // const [selectedSpec, setSelectedSpec] = useState<string | null>(null);
   const [showSpecs, setShowSpecs] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);

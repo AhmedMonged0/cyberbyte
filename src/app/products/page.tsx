@@ -7,14 +7,12 @@ import {
   Grid, 
   List, 
   Search, 
-  SlidersHorizontal,
   Star,
   Heart,
   ShoppingCart,
-  Eye,
-  ChevronDown
+  Eye
 } from 'lucide-react';
-import Link from 'next/link';
+// import Link from 'next/link';
 
 interface Product {
   id: number;

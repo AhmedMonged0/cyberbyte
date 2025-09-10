@@ -4,9 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
   Facebook, 
-  Twitter, 
   Instagram, 
-  Linkedin, 
   Mail, 
   Phone, 
   MapPin,

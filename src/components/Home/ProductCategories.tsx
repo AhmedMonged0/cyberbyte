@@ -8,12 +8,8 @@ import {
   Headphones, 
   Cpu, 
   Monitor, 
-  Keyboard, 
-  Mouse,
-  HardDrive,
-  MemoryStick,
-  Gamepad2,
-  Camera
+  Keyboard,
+  HardDrive
 } from 'lucide-react';
 
 export default function ProductCategories() {

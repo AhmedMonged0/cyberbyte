@@ -24,7 +24,7 @@ export default function Layout({ children }: LayoutProps) {
     const savedCart = localStorage.getItem('cyberbyte-cart');
     if (savedCart) {
       const cart = JSON.parse(savedCart);
-      const count = cart.reduce((total: number, item: any) => total + item.quantity, 0);
+      const count = cart.reduce((total: number, item: { quantity: number }) => total + item.quantity, 0);
       setCartCount(count);
     }
 

@@ -130,7 +130,7 @@ export default function AboutPage() {
               </span>
             </h1>
             <p className="text-xl text-text-secondary leading-relaxed">
-              We're passionate about technology and committed to bringing you the best 
+              We&apos;re passionate about technology and committed to bringing you the best 
               computer products and services. Our mission is to make cutting-edge technology 
               accessible to everyone, everywhere.
             </p>
@@ -349,7 +349,7 @@ export default function AboutPage() {
               Meet Our Team
             </h2>
             <p className="text-lg text-text-secondary max-w-3xl mx-auto">
-              The passionate individuals behind CyberByte's success.
+              The passionate individuals behind CyberByte&apos;s success.
             </p>
           </motion.div>
 

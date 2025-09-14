@@ -596,7 +596,8 @@ export default function ProductsPage() {
                     </div>
                   )}
                 </motion.div>
-              ))}
+              ))
+            }
             </div>
 
             {/* Pagination */}

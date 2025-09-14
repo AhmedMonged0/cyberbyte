@@ -54,8 +54,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Database connection error
+    if (error instanceof Error && error.message.includes('connect')) {
+      console.error('Database connection error:', error.message)
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

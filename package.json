@@ -4,13 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:push:local": "cp prisma/schema.local.prisma prisma/schema.prisma && prisma db push && cp prisma/schema.prisma prisma/schema.prod.prisma",
-    "db:push:prod": "cp prisma/schema.prisma prisma/schema.prod.prisma && prisma db push"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",

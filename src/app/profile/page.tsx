@@ -4,12 +4,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { User, Mail, Calendar, Settings, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ChangePasswordModal from '@/components/ChangePasswordModal';
 
 export default function ProfilePage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -129,7 +131,10 @@ export default function ProfilePage() {
               Account Settings
             </h2>
             <div className="space-y-4">
-              <button className="w-full text-left p-4 bg-accent-gray hover:bg-accent-blue/20 rounded-lg transition-colors duration-300">
+              <button 
+                onClick={() => setIsChangePasswordModalOpen(true)}
+                className="w-full text-left p-4 bg-accent-gray hover:bg-accent-blue/20 rounded-lg transition-colors duration-300"
+              >
                 <h3 className="font-medium text-text-primary">Change Password</h3>
                 <p className="text-sm text-text-secondary">Update your account password</p>
               </button>
@@ -172,6 +177,13 @@ export default function ProfilePage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+        userId={user.id}
+      />
     </div>
   );
 }

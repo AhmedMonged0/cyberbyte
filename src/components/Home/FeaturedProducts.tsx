@@ -207,7 +207,7 @@ export default function FeaturedProducts() {
                             </div>
 
                             {/* Discount Badge */}
-                            {product.discount > 0 && (
+                            {product.discount && product.discount > 0 && (
                               <div className="absolute top-4 right-4 z-10">
                                 <div className="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
                                   -{product.discount}%

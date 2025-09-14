@@ -14,8 +14,11 @@ import {
   Moon,
   Laptop,
   Headphones,
-  Cpu
+  Cpu,
+  LogOut,
+  Settings
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   cartCount: number;
@@ -23,11 +26,13 @@ interface HeaderProps {
 }
 
 export default function Header({ cartCount, onSearch }: HeaderProps) {
+  const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,10 +47,13 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
       if (isCategoriesOpen && !(event.target as Element).closest('.categories-dropdown')) {
         setIsCategoriesOpen(false);
       }
+      if (isUserMenuOpen && !(event.target as Element).closest('.user-menu-dropdown')) {
+        setIsUserMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isCategoriesOpen]);
+  }, [isCategoriesOpen, isUserMenuOpen]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,34 +214,80 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
             </Link>
 
             {/* User Account Dropdown */}
-            <div className="relative">
+            <div className="relative user-menu-dropdown">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="p-2 rounded-lg bg-accent-gray hover:bg-accent-blue/20 transition-colors duration-300"
               >
                 <User className="w-5 h-5" />
               </motion.button>
               
-              {/* Auth Links */}
-              <div className="absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-xl z-50 hidden group-hover:block">
-                <div className="py-2">
-                  <Link
-                    href="/login"
-                    className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
+              {/* User Menu */}
+              <AnimatePresence>
+                {isUserMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-xl z-50"
                   >
-                    <User className="w-4 h-4 mr-3" />
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
-                  >
-                    <User className="w-4 h-4 mr-3" />
-                    Sign Up
-                  </Link>
-                </div>
-              </div>
+                    <div className="py-2">
+                      {user ? (
+                        <>
+                          <div className="px-4 py-2 border-b border-accent-gray">
+                            <p className="text-sm text-text-primary font-medium">
+                              {user.firstName} {user.lastName}
+                            </p>
+                            <p className="text-xs text-text-secondary">
+                              {user.email}
+                            </p>
+                          </div>
+                          <Link
+                            href="/profile"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
+                          >
+                            <Settings className="w-4 h-4 mr-3" />
+                            Profile Settings
+                          </Link>
+                          <button
+                            onClick={() => {
+                              logout();
+                              setIsUserMenuOpen(false);
+                            }}
+                            className="flex items-center w-full px-4 py-2 text-text-secondary hover:text-red-400 hover:bg-accent-gray transition-all duration-300"
+                          >
+                            <LogOut className="w-4 h-4 mr-3" />
+                            Sign Out
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            href="/login"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
+                          >
+                            <User className="w-4 h-4 mr-3" />
+                            Sign In
+                          </Link>
+                          <Link
+                            href="/register"
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
+                          >
+                            <User className="w-4 h-4 mr-3" />
+                            Sign Up
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Mobile Menu Button */}
@@ -308,6 +362,60 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                       <span>{category.name}</span>
                     </Link>
                   ))}
+                </div>
+
+                {/* Mobile Auth Links */}
+                <div className="px-4 py-2 border-t border-accent-gray">
+                  <div className="text-text-secondary font-medium mb-2">Account</div>
+                  {user ? (
+                    <>
+                      <div className="px-2 py-2 mb-2">
+                        <p className="text-sm text-text-primary font-medium">
+                          {user.firstName} {user.lastName}
+                        </p>
+                        <p className="text-xs text-text-secondary">
+                          {user.email}
+                        </p>
+                      </div>
+                      <Link
+                        href="/profile"
+                        className="flex items-center space-x-3 px-2 py-2 text-text-secondary hover:text-accent-blue transition-colors duration-300"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span>Profile Settings</span>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="flex items-center space-x-3 px-2 py-2 text-text-secondary hover:text-red-400 transition-colors duration-300 w-full text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="flex items-center space-x-3 px-2 py-2 text-text-secondary hover:text-accent-blue transition-colors duration-300"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Sign In</span>
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="flex items-center space-x-3 px-2 py-2 text-text-secondary hover:text-accent-blue transition-colors duration-300"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Sign Up</span>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>

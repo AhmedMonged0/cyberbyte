@@ -58,6 +58,8 @@ export default function AdminLoginPage() {
     setIsLoading(true);
     
     try {
+      console.log('Sending login request with:', formData);
+      
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: {
@@ -66,9 +68,12 @@ export default function AdminLoginPage() {
         body: JSON.stringify(formData),
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (!response.ok) {
+        console.log('Login failed:', data.error);
         throw new Error(data.error || 'Login failed');
       }
 

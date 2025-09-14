@@ -11,6 +11,8 @@ const adminLoginSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    console.log('Admin login request:', { email: body.email, passwordLength: body.password?.length })
+    
     const { email, password } = adminLoginSchema.parse(body)
 
     // Find admin by email
@@ -21,7 +23,14 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('Admin found:', !!admin)
+    if (admin) {
+      console.log('Admin email:', admin.email)
+      console.log('Admin isActive:', admin.isActive)
+    }
+
     if (!admin) {
+      console.log('Admin not found or inactive')
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -30,8 +39,10 @@ export async function POST(request: NextRequest) {
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, admin.password)
+    console.log('Password valid:', isPasswordValid)
 
     if (!isPasswordValid) {
+      console.log('Password verification failed')
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }

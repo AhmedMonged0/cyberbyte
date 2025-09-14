@@ -37,21 +37,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Prevent flash of light mode
-              (function() {
-                try {
-                  const html = document.documentElement;
-                  html.classList.add('dark');
-                  html.style.backgroundColor = '#0a0a0a';
-                  html.style.color = '#ffffff';
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            html {
+              background-color: #0a0a0a !important;
+              color: #ffffff !important;
+            }
+          `
+        }} />
       </head>
       <body className={`${inter.className} bg-primary-black text-text-primary`}>
         <AuthProvider>

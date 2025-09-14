@@ -15,6 +15,11 @@
   --text-accent: #00d4ff;
 }
 
+html {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
 /* Force Tailwind to recognize our custom colors */
 .bg-primary-black { background-color: #0a0a0a; }
 .bg-primary-black-secondary { background-color: #1a1a1a; }

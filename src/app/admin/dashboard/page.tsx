@@ -12,10 +12,17 @@ import {
   Eye,
   LogOut,
   ArrowLeft,
-  Shield
+  Shield,
+  Package,
+  ShoppingCart,
+  DollarSign,
+  BarChart3,
+  Settings,
+  FileText
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 interface User {
   id: string;
@@ -26,10 +33,39 @@ interface User {
 }
 
 interface Stats {
-  totalUsers: number;
-  usersToday: number;
-  usersThisWeek: number;
-  usersThisMonth: number;
+  users: {
+    total: number;
+    today: number;
+    thisWeek: number;
+    thisMonth: number;
+    thisYear: number;
+    recent: User[];
+  };
+  products: {
+    total: number;
+    active: number;
+    outOfStock: number;
+    featured: number;
+  };
+  orders: {
+    total: number;
+    pending: number;
+    completed: number;
+    totalRevenue: number;
+  };
+  charts: {
+    dailyRegistrations: Array<{ date: string; users: number }>;
+    monthlyRevenue: Array<{ month: string; revenue: number }>;
+    orderStatusDistribution: Array<{ status: string; _count: { status: number } }>;
+  };
+  topProducts: Array<{
+    id: string;
+    name: string;
+    price: number;
+    rating: number;
+    reviews: number;
+    image: string;
+  }>;
 }
 
 export default function AdminDashboard() {
@@ -54,10 +90,10 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/admin/stats');
+      const response = await fetch('/api/admin/advanced-stats');
       const data = await response.json();
       if (response.ok) {
-        setStats(data.stats);
+        setStats(data);
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -142,6 +178,34 @@ export default function AdminDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Navigation Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex space-x-4 mb-8"
+        >
+          <Link href="/admin/dashboard" className="px-4 py-2 bg-accent-blue/20 text-accent-blue rounded-lg">
+            <BarChart3 className="w-4 h-4 inline mr-2" />
+            Dashboard
+          </Link>
+          <Link href="/admin/products" className="px-4 py-2 text-text-secondary hover:text-accent-blue transition-colors">
+            <Package className="w-4 h-4 inline mr-2" />
+            Products
+          </Link>
+          <Link href="/admin/orders" className="px-4 py-2 text-text-secondary hover:text-accent-blue transition-colors">
+            <ShoppingCart className="w-4 h-4 inline mr-2" />
+            Orders
+          </Link>
+          <Link href="/admin/users" className="px-4 py-2 text-text-secondary hover:text-accent-blue transition-colors">
+            <Users className="w-4 h-4 inline mr-2" />
+            Users
+          </Link>
+          <Link href="/admin/settings" className="px-4 py-2 text-text-secondary hover:text-accent-blue transition-colors">
+            <Settings className="w-4 h-4 inline mr-2" />
+            Settings
+          </Link>
+        </motion.div>
+
         {/* Stats Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -152,7 +216,8 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-text-secondary text-sm">إجمالي المستخدمين</p>
-                <p className="text-3xl font-bold text-white">{stats.totalUsers}</p>
+                <p className="text-3xl font-bold text-white">{stats.users.total}</p>
+                <p className="text-xs text-green-400">+{stats.users.today} اليوم</p>
               </div>
               <Users className="w-8 h-8 text-accent-blue" />
             </div>
@@ -161,31 +226,125 @@ export default function AdminDashboard() {
           <div className="glass-card rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm">اليوم</p>
-                <p className="text-3xl font-bold text-white">{stats.usersToday}</p>
+                <p className="text-text-secondary text-sm">المنتجات</p>
+                <p className="text-3xl font-bold text-white">{stats.products.total}</p>
+                <p className="text-xs text-yellow-400">{stats.products.outOfStock} نفدت</p>
               </div>
-              <Calendar className="w-8 h-8 text-green-400" />
+              <Package className="w-8 h-8 text-green-400" />
             </div>
           </div>
 
           <div className="glass-card rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm">هذا الأسبوع</p>
-                <p className="text-3xl font-bold text-white">{stats.usersThisWeek}</p>
+                <p className="text-text-secondary text-sm">الطلبات</p>
+                <p className="text-3xl font-bold text-white">{stats.orders.total}</p>
+                <p className="text-xs text-red-400">{stats.orders.pending} في الانتظار</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-yellow-400" />
+              <ShoppingCart className="w-8 h-8 text-yellow-400" />
             </div>
           </div>
 
           <div className="glass-card rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm">هذا الشهر</p>
-                <p className="text-3xl font-bold text-white">{stats.usersThisMonth}</p>
+                <p className="text-text-secondary text-sm">الإيرادات</p>
+                <p className="text-3xl font-bold text-white">${stats.orders.totalRevenue.toLocaleString()}</p>
+                <p className="text-xs text-green-400">إجمالي المبيعات</p>
               </div>
-              <UserPlus className="w-8 h-8 text-purple-400" />
+              <DollarSign className="w-8 h-8 text-purple-400" />
             </div>
+          </div>
+        </motion.div>
+
+        {/* Charts Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+        >
+          {/* Daily Registrations Chart */}
+          <div className="glass-card rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">تسجيل المستخدمين اليومي</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={stats.charts.dailyRegistrations}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="date" stroke="#9CA3AF" />
+                <YAxis stroke="#9CA3AF" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="users" 
+                  stroke="#3B82F6" 
+                  strokeWidth={2}
+                  dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Monthly Revenue Chart */}
+          <div className="glass-card rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">الإيرادات الشهرية</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={stats.charts.monthlyRevenue}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="month" stroke="#9CA3AF" />
+                <YAxis stroke="#9CA3AF" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }} 
+                />
+                <Bar dataKey="revenue" fill="#10B981" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Top Products */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass-card rounded-xl p-6 mb-8"
+        >
+          <h3 className="text-lg font-semibold text-white mb-4">أفضل المنتجات</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {stats.topProducts.map((product) => (
+              <div key={product.id} className="flex items-center space-x-3 p-3 bg-accent-gray/20 rounded-lg">
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
+                <div className="flex-1">
+                  <h4 className="text-white font-medium text-sm">{product.name}</h4>
+                  <p className="text-text-secondary text-xs">${product.price}</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <div className="flex text-yellow-400">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-600'}>
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-text-secondary text-xs">({product.reviews})</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </motion.div>
 

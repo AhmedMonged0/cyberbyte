@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
-async function setupVercelData() {
+async function setupVercel() {
   try {
     console.log('Setting up Vercel database...');
     
@@ -79,34 +79,6 @@ async function setupVercelData() {
         isActive: true,
         isFeatured: true,
         discount: 14
-      },
-      {
-        name: "MacBook Pro 16-inch M2 Max",
-        description: "The MacBook Pro 16-inch with M2 Max chip delivers exceptional performance for professional workflows.",
-        price: 3299,
-        originalPrice: 3499,
-        category: "laptops",
-        brand: "Apple",
-        image: "/images/products/laptops/macbook-pro-16.jpg",
-        images: JSON.stringify([
-          "/images/products/laptops/macbook-pro-16.jpg",
-          "/images/products/laptops/macbook-pro-16.jpg"
-        ]),
-        inStock: true,
-        stock: 5,
-        rating: 4.9,
-        reviews: 156,
-        features: JSON.stringify(["M2 Max Chip", "32GB RAM", "1TB SSD", "Liquid Retina XDR"]),
-        specifications: {
-          "Processor": "Apple M2 Max",
-          "Graphics": "38-core GPU",
-          "Memory": "32GB unified memory",
-          "Storage": "1TB SSD",
-          "Display": "16.2\" Liquid Retina XDR"
-        },
-        isActive: true,
-        isFeatured: true,
-        discount: 6
       }
     ];
 
@@ -126,7 +98,6 @@ async function setupVercelData() {
     console.log('\n🎉 Vercel database setup complete!');
     console.log('📧 Admin Email: admin@cyberbyte.com');
     console.log('🔑 Admin Password: admin123');
-    console.log('🌐 Login URL: https://your-app.vercel.app/admin/login');
 
   } catch (error) {
     console.error('❌ Error setting up Vercel database:', error);
@@ -135,4 +106,4 @@ async function setupVercelData() {
   }
 }
 
-setupVercelData();
+setupVercel();

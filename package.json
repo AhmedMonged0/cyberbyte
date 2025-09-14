@@ -12,8 +12,7 @@
     "db:seed": "node scripts/seed-products.js",
     "postinstall": "npx prisma generate",
     "create-admin": "node scripts/create-admin.js",
-    "deploy:vercel": "node scripts/deploy-to-vercel.js",
-    "setup:vercel": "node scripts/setup-vercel-data.js"
+    "setup:vercel": "node scripts/setup-vercel.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",

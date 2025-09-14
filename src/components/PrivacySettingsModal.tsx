@@ -143,7 +143,7 @@ export default function PrivacySettingsModal({ isOpen, onClose }: PrivacySetting
                   <button
                     onClick={() => handleToggle('dataSharing')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      settings.dataSharing ? 'bg-accent-blue' : 'bg-accent-gray'
+                      settings.dataSharing ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span
@@ -166,7 +166,7 @@ export default function PrivacySettingsModal({ isOpen, onClose }: PrivacySetting
                   <button
                     onClick={() => handleToggle('analytics')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      settings.analytics ? 'bg-accent-blue' : 'bg-accent-gray'
+                      settings.analytics ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span
@@ -189,7 +189,7 @@ export default function PrivacySettingsModal({ isOpen, onClose }: PrivacySetting
                   <button
                     onClick={() => handleToggle('marketing')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      settings.marketing ? 'bg-accent-blue' : 'bg-accent-gray'
+                      settings.marketing ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span

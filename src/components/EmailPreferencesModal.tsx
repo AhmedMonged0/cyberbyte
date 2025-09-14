@@ -102,7 +102,7 @@ export default function EmailPreferencesModal({ isOpen, onClose }: EmailPreferen
                   <button
                     onClick={() => handleToggle('orderUpdates')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      preferences.orderUpdates ? 'bg-accent-blue' : 'bg-accent-gray'
+                      preferences.orderUpdates ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span
@@ -125,7 +125,7 @@ export default function EmailPreferencesModal({ isOpen, onClose }: EmailPreferen
                   <button
                     onClick={() => handleToggle('promotions')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      preferences.promotions ? 'bg-accent-blue' : 'bg-accent-gray'
+                      preferences.promotions ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span
@@ -148,7 +148,7 @@ export default function EmailPreferencesModal({ isOpen, onClose }: EmailPreferen
                   <button
                     onClick={() => handleToggle('securityAlerts')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      preferences.securityAlerts ? 'bg-accent-blue' : 'bg-accent-gray'
+                      preferences.securityAlerts ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span
@@ -171,7 +171,7 @@ export default function EmailPreferencesModal({ isOpen, onClose }: EmailPreferen
                   <button
                     onClick={() => handleToggle('newsletter')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                      preferences.newsletter ? 'bg-accent-blue' : 'bg-accent-gray'
+                      preferences.newsletter ? 'bg-accent-blue' : 'bg-gray-600'
                     }`}
                   >
                     <span

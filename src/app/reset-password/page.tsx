@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react'
+import { Lock, Mail } from 'lucide-react'
 import AuthForm from '@/components/Auth/AuthForm'
 import FormField from '@/components/Auth/FormField'
 import SubmitButton from '@/components/Auth/SubmitButton'
@@ -16,8 +15,6 @@ export default function ResetPasswordPage() {
 
   const [step, setStep] = useState<'email' | 'reset'>('email')
   const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [user, setUser] = useState<any>(null)
 
   const [formData, setFormData] = useState({
@@ -28,13 +25,7 @@ export default function ResetPasswordPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  useEffect(() => {
-    if (token) {
-      verifyToken()
-    }
-  }, [token])
-
-  const verifyToken = async () => {
+  const verifyToken = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await fetch('/api/auth/verify-reset-token', {
@@ -52,13 +43,19 @@ export default function ResetPasswordPage() {
         toast.error(data.error || 'Invalid or expired token')
         router.push('/login')
       }
-    } catch (error) {
+    } catch {
       toast.error('حدث خطأ في التحقق من الرابط')
       router.push('/login')
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [token, router])
+
+  useEffect(() => {
+    if (token) {
+      verifyToken()
+    }
+  }, [token, verifyToken])
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,7 +77,7 @@ export default function ResetPasswordPage() {
       } else {
         setErrors({ email: data.error || 'حدث خطأ في إرسال البريد الإلكتروني' })
       }
-    } catch (error) {
+    } catch {
       toast.error('حدث خطأ في إرسال البريد الإلكتروني')
     } finally {
       setIsLoading(false)
@@ -123,7 +120,7 @@ export default function ResetPasswordPage() {
       } else {
         setErrors({ password: data.error || 'حدث خطأ في تحديث كلمة المرور' })
       }
-    } catch (error) {
+    } catch {
       toast.error('حدث خطأ في تحديث كلمة المرور')
     } finally {
       setIsLoading(false)
@@ -155,6 +152,7 @@ export default function ResetPasswordPage() {
             error={errors.email}
             placeholder="أدخل بريدك الإلكتروني"
             required
+            icon={<Mail className="h-5 w-5 text-text-secondary" />}
           />
 
           <SubmitButton
@@ -187,50 +185,28 @@ export default function ResetPasswordPage() {
       <form onSubmit={handlePasswordSubmit} className="space-y-6">
         <FormField
           label="كلمة المرور الجديدة"
-          type={showPassword ? 'text' : 'password'}
+          type="password"
           name="password"
           value={formData.password}
           onChange={handleInputChange}
           error={errors.password}
           placeholder="أدخل كلمة المرور الجديدة"
           required
-          icon={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5 text-text-secondary" />
-              ) : (
-                <Eye className="h-5 w-5 text-text-secondary" />
-              )}
-            </button>
-          }
+          icon={<Lock className="h-5 w-5 text-text-secondary" />}
+          showPasswordToggle={true}
         />
 
         <FormField
           label="تأكيد كلمة المرور"
-          type={showConfirmPassword ? 'text' : 'password'}
+          type="password"
           name="confirmPassword"
           value={formData.confirmPassword}
           onChange={handleInputChange}
           error={errors.confirmPassword}
           placeholder="أعد إدخال كلمة المرور"
           required
-          icon={
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              {showConfirmPassword ? (
-                <EyeOff className="h-5 w-5 text-text-secondary" />
-              ) : (
-                <Eye className="h-5 w-5 text-text-secondary" />
-              )}
-            </button>
-          }
+          icon={<Lock className="h-5 w-5 text-text-secondary" />}
+          showPasswordToggle={true}
         />
 
         <SubmitButton

@@ -70,13 +70,13 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`sticky top-0 left-0 right-0 z-[9998] transition-all duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-[99998] transition-all duration-300 ${
         isScrolled 
           ? 'glass-card backdrop-blur-md shadow-neon' 
           : 'bg-primary-black/90 backdrop-blur-sm'
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
@@ -232,7 +232,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-xl z-[9999]"
+                    className="absolute right-0 top-full mt-2 w-48 glass-card rounded-lg shadow-xl z-[99999]"
                   >
                     <div className="py-2">
                       {user ? (

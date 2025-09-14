@@ -364,193 +364,83 @@ export default function ProductsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                     className="group"
-                >
-                  {viewMode === 'grid' ? (
-                    // Grid View
-                    <div className="relative bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
-                      {/* Product Badge */}
-                      <div className="absolute top-4 left-4 z-10">
-                        <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.isFeatured ? 'Featured' : 'New')} text-white text-xs font-semibold rounded-full`}>
-                          {product.isFeatured ? 'Featured' : 'New'}
-                        </div>
-                      </div>
-
-                      {/* Discount Badge */}
-                      {product.discount && product.discount > 0 && (
-                        <div className="absolute top-4 right-4 z-10">
-                          <div className="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                            -{product.discount}%
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Product Image */}
-                      <div className="relative h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-t-2xl overflow-hidden">
-                        <ProductImage
-                          src={getProductImageSrc(product)}
-                          alt={product.name}
-                          name={product.name}
-                          className="w-full h-full"
-                          showQuickView={true}
-                        />
-                        
-                        {/* Quick Actions */}
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-3 bg-accent-blue rounded-full text-white hover:bg-accent-purple transition-colors duration-300"
-                          >
-                            <Eye className="w-5 h-5" />
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-3 bg-accent-gray rounded-full text-white hover:bg-accent-blue transition-colors duration-300"
-                          >
-                            <Heart className="w-5 h-5" />
-                          </motion.button>
-                        </div>
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="p-6">
-                        <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-accent-blue transition-colors duration-300">
-                          {product.name}
-                        </h3>
-                        
-                        {/* Rating */}
-                        <div className="flex items-center space-x-2 mb-3">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < Math.floor(product.rating)
-                                    ? 'text-yellow-400 fill-current'
-                                    : 'text-gray-400'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-text-secondary">
-                            {product.rating} ({product.reviews})
-                          </span>
-                        </div>
-
-                        {/* Features */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {product.features.slice(0, 2).map((feature, index) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 bg-accent-gray/50 text-xs text-accent-blue rounded"
-                            >
-                              {feature}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Price */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-2xl font-bold text-white">
-                              ${product.price}
-                            </span>
-                            {product.originalPrice && product.originalPrice > product.price && (
-                              <span className="text-lg text-text-secondary line-through">
-                                ${product.originalPrice}
-                              </span>
-                            )}
-                          </div>
-                          <div className={`px-2 py-1 rounded text-xs font-semibold ${
-                            product.inStock 
-                              ? 'bg-green-500/20 text-green-400' 
-                              : 'bg-red-500/20 text-red-400'
-                          }`}>
-                            {product.inStock ? 'In Stock' : 'Out of Stock'}
+                  >
+                    {viewMode === 'grid' ? (
+                      // Grid View
+                      <div className="relative bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
+                        {/* Product Badge */}
+                        <div className="absolute top-4 left-4 z-10">
+                          <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.isFeatured ? 'Featured' : 'New')} text-white text-xs font-semibold rounded-full`}>
+                            {product.isFeatured ? 'Featured' : 'New'}
                           </div>
                         </div>
 
-                        {/* Add to Cart Button */}
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          disabled={!product.inStock}
-                          className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
-                            product.inStock
-                              ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
-                              : 'bg-accent-gray text-text-secondary cursor-not-allowed'
-                          }`}
-                        >
-                          <ShoppingCart className="w-5 h-5" />
-                          <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
-                        </motion.button>
-                      </div>
-                    </div>
-                  ) : (
-                    // List View
-                    <div className="flex bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
-                      {/* Product Image */}
-                      <div className="relative w-48 h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary overflow-hidden">
-                        <ProductImage
-                          src={getProductImageSrc(product)}
-                          alt={product.name}
-                          name={product.name}
-                          className="w-full h-full"
-                          showQuickView={false}
-                        />
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="flex-1 p-6">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-accent-blue transition-colors duration-300">
-                              {product.name}
-                            </h3>
-                            <div className="flex items-center space-x-4 mb-3">
-                              <div className="flex items-center space-x-1">
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star
-                                      key={i}
-                                      className={`w-4 h-4 ${
-                                        i < Math.floor(product.rating)
-                                          ? 'text-yellow-400 fill-current'
-                                          : 'text-gray-400'
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
-                                <span className="text-sm text-text-secondary">
-                                  {product.rating} ({product.reviews} reviews)
-                                </span>
-                              </div>
-                              <div className={`px-2 py-1 rounded text-xs font-semibold ${
-                                product.inStock 
-                                  ? 'bg-green-500/20 text-green-400' 
-                                  : 'bg-red-500/20 text-red-400'
-                              }`}>
-                                {product.inStock ? 'In Stock' : 'Out of Stock'}
-                              </div>
+                        {/* Discount Badge */}
+                        {product.discount && product.discount > 0 && (
+                          <div className="absolute top-4 right-4 z-10">
+                            <div className="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                              -{product.discount}%
                             </div>
                           </div>
+                        )}
+
+                        {/* Product Image */}
+                        <div className="relative h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-t-2xl overflow-hidden">
+                          <ProductImage
+                            src={getProductImageSrc(product)}
+                            alt={product.name}
+                            name={product.name}
+                            className="w-full h-full"
+                            showQuickView={true}
+                          />
                           
-                          <div className="text-right">
-                            <div className="text-3xl font-bold text-white mb-2">
-                              ${product.price}
-                            </div>
-                            {product.originalPrice && product.originalPrice > product.price && (
-                              <div className="text-lg text-text-secondary line-through">
-                                ${product.originalPrice}
-                              </div>
-                            )}
+                          {/* Quick Actions */}
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="p-3 bg-accent-blue rounded-full text-white hover:bg-accent-purple transition-colors duration-300"
+                            >
+                              <Eye className="w-5 h-5" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="p-3 bg-accent-gray rounded-full text-white hover:bg-accent-blue transition-colors duration-300"
+                            >
+                              <Heart className="w-5 h-5" />
+                            </motion.button>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="flex flex-wrap gap-2">
-                            {product.features.map((feature, index) => (
+                        {/* Product Info */}
+                        <div className="p-6">
+                          <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-accent-blue transition-colors duration-300">
+                            {product.name}
+                          </h3>
+                          
+                          {/* Rating */}
+                          <div className="flex items-center space-x-2 mb-3">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < Math.floor(product.rating)
+                                      ? 'text-yellow-400 fill-current'
+                                      : 'text-gray-400'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-text-secondary">
+                              {product.rating} ({product.reviews})
+                            </span>
+                          </div>
+
+                          {/* Features */}
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {product.features.slice(0, 2).map((feature, index) => (
                               <span
                                 key={index}
                                 className="px-2 py-1 bg-accent-gray/50 text-xs text-accent-blue rounded"
@@ -559,42 +449,152 @@ export default function ProductsPage() {
                               </span>
                             ))}
                           </div>
-                          
-                          <div className="flex items-center space-x-2">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              className="p-2 bg-accent-gray rounded-lg text-white hover:bg-accent-blue transition-colors duration-300"
-                            >
-                              <Heart className="w-5 h-5" />
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              className="p-2 bg-accent-gray rounded-lg text-white hover:bg-accent-blue transition-colors duration-300"
-                            >
-                              <Eye className="w-5 h-5" />
-                            </motion.button>
-                            <Link href={`/products/${product.id}`}>
+
+                          {/* Price */}
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-2xl font-bold text-white">
+                                ${product.price}
+                              </span>
+                              {product.originalPrice && product.originalPrice > product.price && (
+                                <span className="text-lg text-text-secondary line-through">
+                                  ${product.originalPrice}
+                                </span>
+                              )}
+                            </div>
+                            <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                              product.inStock 
+                                ? 'bg-green-500/20 text-green-400' 
+                                : 'bg-red-500/20 text-red-400'
+                            }`}>
+                              {product.inStock ? 'In Stock' : 'Out of Stock'}
+                          </div>
+                        </div>
+
+                          {/* Add to Cart Button */}
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            disabled={!product.inStock}
+                            className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                              product.inStock
+                                ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
+                                : 'bg-accent-gray text-text-secondary cursor-not-allowed'
+                            }`}
+                          >
+                            <ShoppingCart className="w-5 h-5" />
+                            <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+                          </motion.button>
+                        </div>
+                      </div>
+                    ) : (
+                      // List View
+                      <div className="flex bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
+                        {/* Product Image */}
+                        <div className="relative w-48 h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary overflow-hidden">
+                          <ProductImage
+                            src={getProductImageSrc(product)}
+                            alt={product.name}
+                            name={product.name}
+                            className="w-full h-full"
+                            showQuickView={false}
+                          />
+                        </div>
+
+                        {/* Product Info */}
+                        <div className="flex-1 p-6">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-accent-blue transition-colors duration-300">
+                                {product.name}
+                              </h3>
+                              <div className="flex items-center space-x-4 mb-3">
+                                <div className="flex items-center space-x-1">
+                                  <div className="flex items-center">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        className={`w-4 h-4 ${
+                                          i < Math.floor(product.rating)
+                                            ? 'text-yellow-400 fill-current'
+                                            : 'text-gray-400'
+                                        }`}
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-sm text-text-secondary">
+                                    {product.rating} ({product.reviews} reviews)
+                                  </span>
+                                </div>
+                                <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                                  product.inStock 
+                                    ? 'bg-green-500/20 text-green-400' 
+                                    : 'bg-red-500/20 text-red-400'
+                                }`}>
+                                  {product.inStock ? 'In Stock' : 'Out of Stock'}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-3xl font-bold text-white mb-2">
+                                ${product.price}
+                              </div>
+                              {product.originalPrice && product.originalPrice > product.price && (
+                                <div className="text-lg text-text-secondary line-through">
+                                  ${product.originalPrice}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-wrap gap-2">
+                              {product.features.map((feature, index) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-1 bg-accent-gray/50 text-xs text-accent-blue rounded"
+                                >
+                                  {feature}
+                                </span>
+                              ))}
+                            </div>
+                            
+                            <div className="flex items-center space-x-2">
                               <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                disabled={!product.inStock}
-                                className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2 ${
-                                  product.inStock
-                                    ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
-                                    : 'bg-accent-gray text-text-secondary cursor-not-allowed'
-                                }`}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-2 bg-accent-gray rounded-lg text-white hover:bg-accent-blue transition-colors duration-300"
                               >
-                                <ShoppingCart className="w-5 h-5" />
-                                <span>{product.inStock ? 'View Details' : 'Out of Stock'}</span>
+                                <Heart className="w-5 h-5" />
                               </motion.button>
-                            </Link>
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-2 bg-accent-gray rounded-lg text-white hover:bg-accent-blue transition-colors duration-300"
+                              >
+                                <Eye className="w-5 h-5" />
+                              </motion.button>
+                              <Link href={`/products/${product.id}`}>
+                                <motion.button
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  disabled={!product.inStock}
+                                  className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2 ${
+                                    product.inStock
+                                      ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
+                                      : 'bg-accent-gray text-text-secondary cursor-not-allowed'
+                                  }`}
+                                >
+                                  <ShoppingCart className="w-5 h-5" />
+                                  <span>{product.inStock ? 'View Details' : 'Out of Stock'}</span>
+                                </motion.button>
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                   </motion.div>
                 ))
               }

@@ -142,10 +142,10 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-md bg-bg-primary rounded-xl shadow-2xl border border-accent-gray/20"
+            className="relative w-full max-w-md bg-bg-primary/80 backdrop-blur-md rounded-xl shadow-2xl border border-accent-blue/30 shadow-accent-blue/20"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-accent-gray/20">
+            <div className="flex items-center justify-between p-6 border-b border-accent-blue/20 bg-accent-blue/5">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-accent-blue/20 rounded-lg">
                   <Lock className="w-5 h-5 text-accent-blue" />
@@ -176,8 +176,8 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
                     name="currentPassword"
                     value={formData.currentPassword}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 pr-12 bg-bg-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-colors duration-200 ${
-                      errors.currentPassword ? 'border-red-500' : 'border-accent-gray/30'
+                    className={`w-full px-4 py-3 pr-12 bg-bg-secondary/50 backdrop-blur-sm border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all duration-200 ${
+                      errors.currentPassword ? 'border-red-500' : 'border-accent-blue/30'
                     }`}
                     placeholder="Enter your current password"
                     disabled={isLoading}
@@ -211,8 +211,8 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
                     name="newPassword"
                     value={formData.newPassword}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 pr-12 bg-bg-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-colors duration-200 ${
-                      errors.newPassword ? 'border-red-500' : 'border-accent-gray/30'
+                    className={`w-full px-4 py-3 pr-12 bg-bg-secondary/50 backdrop-blur-sm border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all duration-200 ${
+                      errors.newPassword ? 'border-red-500' : 'border-accent-blue/30'
                     }`}
                     placeholder="Enter your new password"
                     disabled={isLoading}
@@ -246,8 +246,8 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 pr-12 bg-bg-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-colors duration-200 ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-accent-gray/30'
+                    className={`w-full px-4 py-3 pr-12 bg-bg-secondary/50 backdrop-blur-sm border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all duration-200 ${
+                      errors.confirmPassword ? 'border-red-500' : 'border-accent-blue/30'
                     }`}
                     placeholder="Confirm your new password"
                     disabled={isLoading}
@@ -276,14 +276,14 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
                   type="button"
                   onClick={handleClose}
                   disabled={isLoading}
-                  className="flex-1 px-4 py-3 bg-accent-gray hover:bg-accent-gray/80 text-text-primary rounded-lg font-medium transition-colors duration-200 disabled:opacity-50"
+                  className="flex-1 px-4 py-3 bg-accent-gray/50 backdrop-blur-sm hover:bg-accent-gray/70 text-text-primary rounded-lg font-medium transition-all duration-200 disabled:opacity-50 border border-accent-gray/30"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 px-4 py-3 bg-accent-blue hover:bg-accent-blue/90 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 bg-accent-blue/80 backdrop-blur-sm hover:bg-accent-blue text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-accent-blue/20"
                 >
                   {isLoading ? 'Changing...' : 'Change Password'}
                 </button>

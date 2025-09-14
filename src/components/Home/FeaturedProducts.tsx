@@ -9,7 +9,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
-import ProductImage from '../ProductImage';
+import ProductImage from '@/components/ProductImage';
+import { getProductImage, getFallbackImage } from '@/data/productImages';
 
 export default function FeaturedProducts() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -21,6 +22,12 @@ export default function FeaturedProducts() {
 
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
+  // Function to get product image
+  const getProductImageSrc = (product: any) => {
+    const productImage = getProductImage(product.category, product.productId);
+    return productImage?.main || getFallbackImage(product.category);
+  };
 
   const products = [
     {
@@ -66,7 +73,7 @@ export default function FeaturedProducts() {
       badge: "Premium",
       features: ["M2 Max", "32GB RAM", "1TB SSD"],
       inStock: true,
-      discount: 0
+      discount: undefined
     },
     {
       id: 4,
@@ -209,9 +216,9 @@ export default function FeaturedProducts() {
                             )}
 
                             {/* Product Image */}
-                            <div className="relative h-48 overflow-hidden">
+                            <div className="relative h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary overflow-hidden">
                               <ProductImage
-                                src={product.image}
+                                src={getProductImageSrc(product)}
                                 alt={product.name}
                                 name={product.name}
                                 className="w-full h-full"

@@ -152,7 +152,7 @@ export default function Footer() {
                   </motion.a>
                   <motion.a
                     whileHover={{ scale: 1.2, y: -2 }}
-                    href="https://www.instagram.com/ahmed_monged"
+                    href="https://www.instagram.com/_eltagriby?igsh=MWJmaTh3Nmd5NTg4eg%3D%3D&utm_source=qr"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 bg-accent-gray rounded-lg hover:bg-pink-500/20 transition-colors duration-300"

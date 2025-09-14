@@ -12,6 +12,8 @@ import {
   ShoppingCart,
   Eye
 } from 'lucide-react';
+import { getProductImage, getFallbackImage } from '@/data/productImages';
+import ProductImage from '@/components/ProductImage';
 
 interface Product {
   id: number;
@@ -41,6 +43,25 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
+
+  // Function to get product image
+  const getProductImageSrc = (product: Product) => {
+    // Map product names to image IDs
+    const productIdMap: { [key: string]: string } = {
+      'Alienware X17 R2 Gaming Laptop': 'alienware-x17-r2',
+      'ASUS ROG Strix G15': 'asus-rog-strix-g15',
+      'MacBook Pro 16-inch M2 Max': 'macbook-pro-16',
+      'Razer Blade 15 Advanced': 'razer-blade-15',
+      'Corsair K95 RGB Keyboard': 'corsair-k95-rgb',
+      'Logitech MX Master 3S': 'logitech-mx-master-3s',
+      'Intel Core i9-13900K': 'intel-core-i9-13900k',
+      'NVIDIA RTX 4090': 'nvidia-rtx-4090'
+    };
+    
+    const productId = productIdMap[product.name] || product.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const productImage = getProductImage(product.category, productId);
+    return productImage?.main || getFallbackImage(product.category);
+  };
 
   // Mock data
   useEffect(() => {
@@ -86,7 +107,7 @@ export default function ProductsPage() {
         badge: "Premium",
         features: ["M2 Max", "32GB RAM", "1TB SSD"],
         inStock: true,
-        discount: 0,
+        discount: undefined,
         category: "laptops",
         brand: "Apple"
       },
@@ -131,7 +152,7 @@ export default function ProductsPage() {
         badge: "Professional",
         features: ["Wireless", "Ergonomic", "Precision"],
         inStock: true,
-        discount: 0,
+        discount: undefined,
         category: "accessories",
         brand: "Logitech"
       },
@@ -464,15 +485,14 @@ export default function ProductsPage() {
                       )}
 
                       {/* Product Image */}
-                      <div className="relative h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary overflow-hidden">
-                        <div className="w-full h-full bg-gradient-to-br from-accent-gray to-primary-black-secondary flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full flex items-center justify-center">
-                              <span className="text-2xl font-orbitron font-bold">B</span>
-                            </div>
-                            <p className="text-text-secondary text-sm">Product Image</p>
-                          </div>
-                        </div>
+                      <div className="relative h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-t-2xl overflow-hidden">
+                        <ProductImage
+                          src={getProductImageSrc(product)}
+                          alt={product.name}
+                          name={product.name}
+                          className="w-full h-full"
+                          showQuickView={true}
+                        />
                         
                         {/* Quick Actions */}
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
@@ -572,14 +592,13 @@ export default function ProductsPage() {
                     <div className="flex bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
                       {/* Product Image */}
                       <div className="relative w-48 h-48 bg-gradient-to-br from-accent-gray to-primary-black-secondary overflow-hidden">
-                        <div className="w-full h-full bg-gradient-to-br from-accent-gray to-primary-black-secondary flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 mx-auto mb-2 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full flex items-center justify-center">
-                              <span className="text-xl font-orbitron font-bold">B</span>
-                            </div>
-                            <p className="text-text-secondary text-xs">Product Image</p>
-                          </div>
-                        </div>
+                        <ProductImage
+                          src={getProductImageSrc(product)}
+                          alt={product.name}
+                          name={product.name}
+                          className="w-full h-full"
+                          showQuickView={false}
+                        />
                       </div>
 
                       {/* Product Info */}

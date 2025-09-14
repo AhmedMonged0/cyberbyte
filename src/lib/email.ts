@@ -14,12 +14,13 @@ const transporter = nodemailer.createTransport({
 export async function sendPasswordResetEmail(email: string, resetToken: string) {
   const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
   
-  // في بيئة التطوير، نطبع الرابط في الكونسول بدلاً من إرسال إيميل
-  if (process.env.NODE_ENV === 'development' || !process.env.SMTP_USER) {
+  // في بيئة التطوير أو إذا لم تكن هناك إعدادات SMTP، نطبع الرابط في الكونسول
+  if (process.env.NODE_ENV === 'development' || !process.env.SMTP_USER || process.env.SMTP_USER === 'test@example.com') {
     console.log('🔗 Password Reset Link (Development Mode):')
     console.log(`Email: ${email}`)
     console.log(`Reset URL: ${resetUrl}`)
     console.log(`Token: ${resetToken}`)
+    console.log('📧 Since email is not configured, the reset link is shown above.')
     return true
   }
   

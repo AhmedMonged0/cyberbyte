@@ -53,6 +53,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if we're in development mode or email is not configured
+    const isDevelopment = process.env.NODE_ENV === 'development' || 
+                         !process.env.SMTP_USER || 
+                         process.env.SMTP_USER === 'test@example.com'
+
+    if (isDevelopment) {
+      // Return the reset link for development
+      const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-link?token=${resetToken}&email=${encodeURIComponent(email)}`
+      return NextResponse.json({
+        message: 'Password reset link generated successfully.',
+        resetUrl: resetUrl,
+        development: true
+      })
+    }
+
     return NextResponse.json({
       message: 'If an account with that email exists, we sent a password reset link.'
     })

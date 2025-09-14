@@ -73,7 +73,13 @@ export default function ResetPasswordPage() {
       const data = await response.json()
 
       if (response.ok) {
-        toast.success('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')
+        if (data.development && data.resetUrl) {
+          // في بيئة التطوير، اعرض الرابط مباشرة
+          toast.success('تم إنشاء رابط إعادة التعيين')
+          window.open(data.resetUrl, '_blank')
+        } else {
+          toast.success('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')
+        }
         setStep('reset')
       } else {
         setErrors({ email: data.error || 'حدث خطأ في إرسال البريد الإلكتروني' })

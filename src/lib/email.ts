@@ -6,13 +6,22 @@ const transporter = nodemailer.createTransport({
   port: parseInt(process.env.SMTP_PORT || '587'),
   secure: false, // true for 465, false for other ports
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.SMTP_USER || 'test@example.com',
+    pass: process.env.SMTP_PASS || 'test-password',
   },
 })
 
 export async function sendPasswordResetEmail(email: string, resetToken: string) {
-  const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`
+  const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
+  
+  // في بيئة التطوير، نطبع الرابط في الكونسول بدلاً من إرسال إيميل
+  if (process.env.NODE_ENV === 'development' || !process.env.SMTP_USER) {
+    console.log('🔗 Password Reset Link (Development Mode):')
+    console.log(`Email: ${email}`)
+    console.log(`Reset URL: ${resetUrl}`)
+    console.log(`Token: ${resetToken}`)
+    return true
+  }
   
   const mailOptions = {
     from: process.env.SMTP_FROM || 'noreply@cyberbyte.com',

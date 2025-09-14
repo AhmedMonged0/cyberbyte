@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:push:local": "cp prisma/schema.local.prisma prisma/schema.prisma && prisma db push && cp prisma/schema.prisma prisma/schema.prod.prisma",
+    "db:push:prod": "cp prisma/schema.prisma prisma/schema.prod.prisma && prisma db push"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
@@ -14,12 +18,14 @@
     "@prisma/client": "^6.16.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/nodemailer": "^7.0.1",
+    "@types/pg": "^8.15.5",
     "bcryptjs": "^3.0.2",
     "crypto": "^1.0.1",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.543.0",
     "next": "15.5.2",
     "nodemailer": "^7.0.6",
+    "pg": "^8.16.3",
     "prisma": "^6.16.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",

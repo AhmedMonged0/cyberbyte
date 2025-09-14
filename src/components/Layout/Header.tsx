@@ -232,7 +232,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-xl z-50"
+                    className="absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-xl z-[9999]"
                   >
                     <div className="py-2">
                       {user ? (
@@ -309,7 +309,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden mt-4 glass-card rounded-lg overflow-hidden z-50"
+              className="lg:hidden mt-4 glass-card rounded-lg overflow-hidden z-[9999]"
             >
               <div className="py-4">
                 <Link 

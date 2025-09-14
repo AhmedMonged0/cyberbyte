@@ -271,7 +271,7 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-primary-black">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-black to-primary-black-secondary">
+      <section className="pt-32 pb-20 bg-gradient-to-br from-primary-black to-primary-black-secondary">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 50 }}

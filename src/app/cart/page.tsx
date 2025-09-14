@@ -118,7 +118,7 @@ export default function CartPage() {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-primary-black">
-        <div className="container mx-auto px-4 py-20">
+        <div className="container mx-auto px-4 pt-32 pb-20">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}

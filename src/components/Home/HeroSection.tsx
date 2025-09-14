@@ -86,7 +86,7 @@ export default function HeroSection() {
       {/* Hero Content */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 h-full flex items-center pt-16 pb-20"
+        className="relative z-10 h-full flex items-center pt-32 pb-20"
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">

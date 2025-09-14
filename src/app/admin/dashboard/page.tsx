@@ -5,9 +5,6 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
   Users, 
-  UserPlus, 
-  Calendar, 
-  TrendingUp,
   Search,
   Eye,
   LogOut,
@@ -17,12 +14,11 @@ import {
   ShoppingCart,
   DollarSign,
   BarChart3,
-  Settings,
-  FileText
+  Settings
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 interface User {
   id: string;
@@ -74,7 +70,6 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     // Check if admin is logged in
@@ -103,7 +98,7 @@ export default function AdminDashboard() {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/admin/users?page=${currentPage}&search=${searchTerm}`);
+      const response = await fetch(`/api/admin/users?search=${searchTerm}`);
       const data = await response.json();
       if (response.ok) {
         setUsers(data.users);
@@ -117,7 +112,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, searchTerm]);
+  }, [searchTerm]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');

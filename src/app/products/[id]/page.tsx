@@ -38,6 +38,9 @@ interface Product {
   brand: string;
   description: string;
   isFeatured: boolean;
+  shipping?: string;
+  warranty?: string;
+  return?: string;
 }
 
 export default function ProductDetailsPage() {
@@ -48,6 +51,8 @@ export default function ProductDetailsPage() {
   const [showSpecs, setShowSpecs] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -377,15 +382,15 @@ export default function ProductDetailsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-accent-gray">
               <div className="flex items-center space-x-3 text-text-secondary">
                 <Truck className="w-5 h-5 text-accent-blue" />
-                <span className="text-sm">{product.shipping}</span>
+                <span className="text-sm">{product.shipping || 'Free shipping'}</span>
               </div>
               <div className="flex items-center space-x-3 text-text-secondary">
                 <Shield className="w-5 h-5 text-accent-blue" />
-                <span className="text-sm">{product.warranty}</span>
+                <span className="text-sm">{product.warranty || '1 year warranty'}</span>
               </div>
               <div className="flex items-center space-x-3 text-text-secondary">
                 <RotateCcw className="w-5 h-5 text-accent-blue" />
-                <span className="text-sm">30-day returns</span>
+                <span className="text-sm">{product.return || '30-day returns'}</span>
               </div>
             </div>
           </motion.div>

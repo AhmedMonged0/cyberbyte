@@ -44,8 +44,11 @@ export default function ProductsPage() {
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [sortBy, setSortBy] = useState('featured');
+  const [sortOrder] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Function to get product image
   const getProductImageSrc = (product: Product) => {

@@ -7,11 +7,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
+import EmailPreferencesModal from '@/components/EmailPreferencesModal';
+import PrivacySettingsModal from '@/components/PrivacySettingsModal';
 
 export default function ProfilePage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -133,16 +137,22 @@ export default function ProfilePage() {
             <div className="space-y-4">
               <button 
                 onClick={() => setIsChangePasswordModalOpen(true)}
-                className="w-full text-left p-4 bg-accent-gray hover:bg-accent-blue/20 rounded-lg transition-colors duration-300"
+                className="w-full text-left p-4 bg-accent-gray/30 hover:bg-accent-blue/30 hover:backdrop-blur-sm hover:border-accent-blue/50 border border-transparent hover:border-accent-blue/30 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent-blue/20"
               >
                 <h3 className="font-medium text-text-primary">Change Password</h3>
                 <p className="text-sm text-text-secondary">Update your account password</p>
               </button>
-              <button className="w-full text-left p-4 bg-accent-gray hover:bg-accent-blue/20 rounded-lg transition-colors duration-300">
+              <button 
+                onClick={() => setIsEmailModalOpen(true)}
+                className="w-full text-left p-4 bg-accent-gray/30 hover:bg-accent-blue/30 hover:backdrop-blur-sm hover:border-accent-blue/50 border border-transparent hover:border-accent-blue/30 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent-blue/20"
+              >
                 <h3 className="font-medium text-text-primary">Email Preferences</h3>
                 <p className="text-sm text-text-secondary">Manage your email notifications</p>
               </button>
-              <button className="w-full text-left p-4 bg-accent-gray hover:bg-accent-blue/20 rounded-lg transition-colors duration-300">
+              <button 
+                onClick={() => setIsPrivacyModalOpen(true)}
+                className="w-full text-left p-4 bg-accent-gray/30 hover:bg-accent-blue/30 hover:backdrop-blur-sm hover:border-accent-blue/50 border border-transparent hover:border-accent-blue/30 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent-blue/20"
+              >
                 <h3 className="font-medium text-text-primary">Privacy Settings</h3>
                 <p className="text-sm text-text-secondary">Control your privacy and data</p>
               </button>
@@ -178,11 +188,21 @@ export default function ProfilePage() {
         </motion.div>
       </div>
 
-      {/* Change Password Modal */}
+      {/* Modals */}
       <ChangePasswordModal
         isOpen={isChangePasswordModalOpen}
         onClose={() => setIsChangePasswordModalOpen(false)}
         userId={user.id}
+      />
+      
+      <EmailPreferencesModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+      />
+      
+      <PrivacySettingsModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
       />
     </div>
   );

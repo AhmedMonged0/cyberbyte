@@ -14,31 +14,30 @@ import {
   ChevronRight,
   Plus,
   Minus,
-  Check
+  Check,
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  originalPrice?: number;
+  originalPrice: number | null;
   rating: number;
   reviews: number;
   images: string[];
-  badge: string;
   features: string[];
   specifications: {
     [key: string]: string;
   };
   inStock: boolean;
-  discount?: number;
+  discount: number | null;
   category: string;
   brand: string;
   description: string;
-  warranty: string;
-  shipping: string;
+  isFeatured: boolean;
 }
 
 export default function ProductDetailsPage() {
@@ -51,53 +50,70 @@ export default function ProductDetailsPage() {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   useEffect(() => {
-    // Mock product data
-    const mockProduct: Product = {
-      id: 1,
-      name: "Alienware X17 R2 Gaming Laptop",
-      price: 2499,
-      originalPrice: 2799,
-      rating: 4.8,
-      reviews: 124,
-      images: [
-        "/api/placeholder/600/400",
-        "/api/placeholder/600/400",
-        "/api/placeholder/600/400",
-        "/api/placeholder/600/400"
-      ],
-      badge: "Best Seller",
-      features: ["RTX 4080", "32GB RAM", "1TB SSD", "240Hz Display", "RGB Lighting"],
-      specifications: {
-        "Processor": "Intel Core i9-12900HK",
-        "Graphics": "NVIDIA GeForce RTX 4080 16GB",
-        "Memory": "32GB DDR5-4800MHz",
-        "Storage": "1TB PCIe NVMe SSD",
-        "Display": "17.3\" FHD 240Hz 3ms",
-        "Operating System": "Windows 11 Home",
-        "Connectivity": "Wi-Fi 6E, Bluetooth 5.2",
-        "Ports": "3x USB-A, 1x USB-C, HDMI 2.1, RJ-45",
-        "Battery": "97Whr",
-        "Weight": "3.2 kg",
-        "Dimensions": "394 x 295 x 20.9 mm"
-      },
-      inStock: true,
-      discount: 11,
-      category: "laptops",
-      brand: "Alienware",
-      description: "The Alienware X17 R2 is a premium gaming laptop that delivers exceptional performance with its powerful RTX 4080 graphics card and high-refresh-rate display. Perfect for gaming enthusiasts and content creators who demand the best.",
-      warranty: "2 Years International Warranty",
-      shipping: "Free shipping on orders over $99"
+    const fetchProduct = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/products/${params.id}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setProduct(data);
+        } else {
+          setError(data.error || 'Failed to fetch product');
+        }
+      } catch (err) {
+        setError('Failed to fetch product');
+        console.error('Error fetching product:', err);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setProduct(mockProduct);
+    if (params.id) {
+      fetchProduct();
+    }
   }, [params.id]);
 
-  if (!product) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-primary-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-accent-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-text-secondary">Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-primary-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-12 h-12 text-red-400" />
+          </div>
+          <h3 className="text-2xl font-semibold text-white mb-4">Error loading product</h3>
+          <p className="text-text-secondary mb-8">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-primary-black flex items-center justify-center">
+        <div className="text-center">
+          <h3 className="text-2xl font-semibold text-white mb-4">Product not found</h3>
+          <p className="text-text-secondary mb-8">The product you're looking for doesn't exist.</p>
+          <Link href="/products" className="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors">
+            Back to Products
+          </Link>
         </div>
       </div>
     );
@@ -178,8 +194,8 @@ export default function ProductDetailsPage() {
 
               {/* Badge */}
               <div className="absolute top-4 left-4">
-                <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.badge)} text-white text-sm font-semibold rounded-full`}>
-                  {product.badge}
+                <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.isFeatured ? 'Featured' : 'New')} text-white text-sm font-semibold rounded-full`}>
+                  {product.isFeatured ? 'Featured' : 'New'}
                 </div>
               </div>
 

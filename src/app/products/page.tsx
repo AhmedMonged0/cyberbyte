@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { 
   Filter, 
   Grid, 
@@ -10,25 +11,27 @@ import {
   Star,
   Heart,
   ShoppingCart,
-  Eye
+  Eye,
+  AlertCircle
 } from 'lucide-react';
 import { getProductImage, getFallbackImage } from '@/data/productImages';
 import ProductImage from '@/components/ProductImage';
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  originalPrice?: number;
+  originalPrice: number | null;
   rating: number;
   reviews: number;
   image: string;
-  badge: string;
+  images: string[];
   features: string[];
   inStock: boolean;
-  discount?: number;
+  discount: number | null;
   category: string;
   brand: string;
+  isFeatured: boolean;
 }
 
 export default function ProductsPage() {
@@ -63,187 +66,43 @@ export default function ProductsPage() {
     return productImage?.main || getFallbackImage(product.category);
   };
 
-  // Mock data
+  // Fetch products from API
   useEffect(() => {
-    const mockProducts: Product[] = [
-      {
-        id: 1,
-        name: "Alienware X17 R2 Gaming Laptop",
-        price: 2499,
-        originalPrice: 2799,
-        rating: 4.8,
-        reviews: 124,
-        image: "/api/placeholder/400/300",
-        badge: "Best Seller",
-        features: ["RTX 4080", "32GB RAM", "1TB SSD"],
-        inStock: true,
-        discount: 11,
-        category: "laptops",
-        brand: "Alienware"
-      },
-      {
-        id: 2,
-        name: "ASUS ROG Strix G15",
-        price: 1899,
-        originalPrice: 2199,
-        rating: 4.7,
-        reviews: 89,
-        image: "/api/placeholder/400/300",
-        badge: "New Arrival",
-        features: ["RTX 4070", "16GB RAM", "512GB SSD"],
-        inStock: true,
-        discount: 14,
-        category: "laptops",
-        brand: "ASUS"
-      },
-      {
-        id: 3,
-        name: "MacBook Pro 16-inch M2 Max",
-        price: 3299,
-        originalPrice: 3299,
-        rating: 4.9,
-        reviews: 203,
-        image: "/api/placeholder/400/300",
-        badge: "Premium",
-        features: ["M2 Max", "32GB RAM", "1TB SSD"],
-        inStock: true,
-        discount: undefined,
-        category: "laptops",
-        brand: "Apple"
-      },
-      {
-        id: 4,
-        name: "Razer Blade 15 Advanced",
-        price: 2199,
-        originalPrice: 2499,
-        rating: 4.6,
-        reviews: 67,
-        image: "/api/placeholder/400/300",
-        badge: "Editor's Choice",
-        features: ["RTX 4070", "16GB RAM", "1TB SSD"],
-        inStock: false,
-        discount: 12,
-        category: "laptops",
-        brand: "Razer"
-      },
-      {
-        id: 5,
-        name: "Corsair K95 RGB Keyboard",
-        price: 199,
-        originalPrice: 249,
-        rating: 4.5,
-        reviews: 156,
-        image: "/api/placeholder/400/300",
-        badge: "Gaming",
-        features: ["Mechanical", "RGB", "Macro Keys"],
-        inStock: true,
-        discount: 20,
-        category: "accessories",
-        brand: "Corsair"
-      },
-      {
-        id: 6,
-        name: "Logitech MX Master 3S",
-        price: 99,
-        originalPrice: 99,
-        rating: 4.7,
-        reviews: 234,
-        image: "/api/placeholder/400/300",
-        badge: "Professional",
-        features: ["Wireless", "Ergonomic", "Precision"],
-        inStock: true,
-        discount: undefined,
-        category: "accessories",
-        brand: "Logitech"
-      },
-      {
-        id: 7,
-        name: "Intel Core i9-13900K",
-        price: 599,
-        originalPrice: 699,
-        rating: 4.8,
-        reviews: 89,
-        image: "/api/placeholder/400/300",
-        badge: "High Performance",
-        features: ["24 Cores", "5.8GHz", "DDR5"],
-        inStock: true,
-        discount: 14,
-        category: "components",
-        brand: "Intel"
-      },
-      {
-        id: 8,
-        name: "NVIDIA RTX 4090",
-        price: 1599,
-        originalPrice: 1799,
-        rating: 4.9,
-        reviews: 167,
-        image: "/api/placeholder/400/300",
-        badge: "Flagship",
-        features: ["24GB VRAM", "Ray Tracing", "DLSS 3"],
-        inStock: true,
-        discount: 11,
-        category: "components",
-        brand: "NVIDIA"
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: '12',
+          ...(searchQuery && { search: searchQuery }),
+          ...(selectedCategory && { category: selectedCategory }),
+          ...(sortBy && { sortBy }),
+          ...(sortOrder && { sortOrder })
+        });
+
+        const response = await fetch(`/api/products?${params}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setProducts(data.products);
+          setFilteredProducts(data.products);
+          setTotalPages(data.pagination.totalPages);
+        } else {
+          setError(data.error || 'Failed to fetch products');
+        }
+      } catch (err) {
+        setError('Failed to fetch products');
+        console.error('Error fetching products:', err);
+      } finally {
+        setIsLoading(false);
       }
-    ];
+    };
 
-    setProducts(mockProducts);
-    setFilteredProducts(mockProducts);
-  }, []);
+    fetchProducts();
+  }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder]);
 
-  // Filter and search logic
-  useEffect(() => {
-    let filtered = products;
-
-    // Search filter
-    if (searchQuery) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.features.some(feature => 
-          feature.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      );
-    }
-
-    // Category filter
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
-    // Brand filter
-    if (selectedBrand !== 'all') {
-      filtered = filtered.filter(product => product.brand === selectedBrand);
-    }
-
-    // Price range filter
-    filtered = filtered.filter(product => 
-      product.price >= priceRange[0] && product.price <= priceRange[1]
-    );
-
-    // Sort products
-    switch (sortBy) {
-      case 'price-low':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'newest':
-        filtered.sort((a, b) => b.id - a.id);
-        break;
-      default:
-        // Keep original order for 'featured'
-        break;
-    }
-
-    setFilteredProducts(filtered);
-    setCurrentPage(1);
-  }, [products, searchQuery, selectedCategory, selectedBrand, priceRange, sortBy]);
+  // Remove the old filter logic since we're now filtering on the server side
+  // The API handles all filtering and sorting
 
   const categories = ['all', 'laptops', 'accessories', 'components'];
   const brands = ['all', 'Alienware', 'ASUS', 'Apple', 'Razer', 'Corsair', 'Logitech', 'Intel', 'NVIDIA'];
@@ -262,11 +121,8 @@ export default function ProductsPage() {
     }
   };
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
+  // Use products directly since API handles pagination
+  const paginatedProducts = products;
 
   return (
     <div className="min-h-screen bg-primary-black">
@@ -457,7 +313,51 @@ export default function ProductsPage() {
                 ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'
                 : 'space-y-6'
             }>
-              {paginatedProducts.map((product, index) => (
+              {isLoading ? (
+                <div className="col-span-full flex justify-center items-center py-20">
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-accent-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-text-secondary">Loading products...</p>
+                  </div>
+                </div>
+              ) : error ? (
+                <div className="col-span-full text-center py-20">
+                  <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <AlertCircle className="w-12 h-12 text-red-400" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white mb-4">Error loading products</h3>
+                  <p className="text-text-secondary mb-8">{error}</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : products.length === 0 ? (
+                <div className="col-span-full text-center py-20">
+                  <div className="w-24 h-24 bg-accent-gray/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Search className="w-12 h-12 text-accent-blue" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white mb-4">No products found</h3>
+                  <p className="text-text-secondary mb-8">
+                    Try adjusting your filters or search terms to find what you're looking for.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('all');
+                      setSelectedBrand('all');
+                      setPriceRange([0, 5000]);
+                      setSortBy('featured');
+                    }}
+                    className="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                paginatedProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 50 }}
@@ -470,8 +370,8 @@ export default function ProductsPage() {
                     <div className="relative bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
                       {/* Product Badge */}
                       <div className="absolute top-4 left-4 z-10">
-                        <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.badge)} text-white text-xs font-semibold rounded-full`}>
-                          {product.badge}
+                        <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.isFeatured ? 'Featured' : 'New')} text-white text-xs font-semibold rounded-full`}>
+                          {product.isFeatured ? 'Featured' : 'New'}
                         </div>
                       </div>
 
@@ -675,19 +575,21 @@ export default function ProductsPage() {
                             >
                               <Eye className="w-5 h-5" />
                             </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              disabled={!product.inStock}
-                              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2 ${
-                                product.inStock
-                                  ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
-                                  : 'bg-accent-gray text-text-secondary cursor-not-allowed'
-                              }`}
-                            >
-                              <ShoppingCart className="w-5 h-5" />
-                              <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
-                            </motion.button>
+                            <Link href={`/products/${product.id}`}>
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                disabled={!product.inStock}
+                                className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2 ${
+                                  product.inStock
+                                    ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
+                                    : 'bg-accent-gray text-text-secondary cursor-not-allowed'
+                                }`}
+                              >
+                                <ShoppingCart className="w-5 h-5" />
+                                <span>{product.inStock ? 'View Details' : 'Out of Stock'}</span>
+                              </motion.button>
+                            </Link>
                           </div>
                         </div>
                       </div>

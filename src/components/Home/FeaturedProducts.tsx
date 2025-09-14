@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   Star, 
@@ -12,8 +12,28 @@ import Link from 'next/link';
 import ProductImage from '@/components/ProductImage';
 import { getProductImage, getFallbackImage } from '@/data/productImages';
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  originalPrice: number | null;
+  rating: number;
+  reviews: number;
+  image: string;
+  images: string[];
+  category: string;
+  brand: string;
+  features: string[];
+  inStock: boolean;
+  discount: number | null;
+  isFeatured: boolean;
+}
+
 export default function FeaturedProducts() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -24,103 +44,34 @@ export default function FeaturedProducts() {
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   // Function to get product image
-  const getProductImageSrc = (product: any) => {
-    const productImage = getProductImage(product.category, product.productId);
+  const getProductImageSrc = (product: Product) => {
+    const productImage = getProductImage(product.category, product.id);
     return productImage?.main || getFallbackImage(product.category);
   };
 
-  const products = [
-    {
-      id: 1,
-      name: "Alienware X17 R2 Gaming Laptop",
-      price: 2499,
-      originalPrice: 2799,
-      rating: 4.8,
-      reviews: 124,
-      image: "/api/placeholder/400/300",
-      productId: "alienware-x17-r2",
-      category: "laptops",
-      badge: "Best Seller",
-      features: ["RTX 4080", "32GB RAM", "1TB SSD"],
-      inStock: true,
-      discount: 11
-    },
-    {
-      id: 2,
-      name: "ASUS ROG Strix G15",
-      price: 1899,
-      originalPrice: 2199,
-      rating: 4.7,
-      reviews: 89,
-      image: "/api/placeholder/400/300",
-      productId: "asus-rog-strix-g15",
-      category: "laptops",
-      badge: "New Arrival",
-      features: ["RTX 4070", "16GB RAM", "512GB SSD"],
-      inStock: true,
-      discount: 14
-    },
-    {
-      id: 3,
-      name: "MacBook Pro 16-inch M2 Max",
-      price: 3299,
-      originalPrice: 3299,
-      rating: 4.9,
-      reviews: 203,
-      image: "/api/placeholder/400/300",
-      productId: "macbook-pro-16",
-      category: "laptops",
-      badge: "Premium",
-      features: ["M2 Max", "32GB RAM", "1TB SSD"],
-      inStock: true,
-      discount: undefined
-    },
-    {
-      id: 4,
-      name: "Razer Blade 15 Advanced",
-      price: 2199,
-      originalPrice: 2499,
-      rating: 4.6,
-      reviews: 67,
-      image: "/api/placeholder/400/300",
-      productId: "razer-blade-15",
-      category: "laptops",
-      badge: "Editor's Choice",
-      features: ["RTX 4070", "16GB RAM", "1TB SSD"],
-      inStock: false,
-      discount: 12
-    },
-    {
-      id: 5,
-      name: "MSI GE76 Raider",
-      price: 1999,
-      originalPrice: 2299,
-      rating: 4.5,
-      reviews: 45,
-      image: "/api/placeholder/400/300",
-      productId: "msi-ge76-raider",
-      category: "laptops",
-      badge: "Gaming",
-      features: ["RTX 4060", "16GB RAM", "512GB SSD"],
-      inStock: true,
-      discount: 13
-    },
-    {
-      id: 6,
-      name: "Dell XPS 15 OLED",
-      price: 1799,
-      originalPrice: 1999,
-      rating: 4.7,
-      reviews: 156,
-      image: "/api/placeholder/400/300",
-      productId: "dell-xps-15",
-      category: "laptops",
-      badge: "Creative",
-      features: ["RTX 4050", "16GB RAM", "512GB SSD"],
-      inStock: true,
-      discount: 10
-    }
-  ];
+  // Fetch featured products
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/products?featured=true&limit=6');
+        const data = await response.json();
+        
+        if (response.ok) {
+          setProducts(data.products);
+        } else {
+          setError(data.error || 'Failed to fetch products');
+        }
+      } catch (err) {
+        setError('Failed to fetch products');
+        console.error('Error fetching products:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   const slidesPerView = 3;
   const totalSlides = Math.ceil(products.length / slidesPerView);
@@ -133,17 +84,71 @@ export default function FeaturedProducts() {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
-  const getBadgeColor = (badge: string) => {
-    switch (badge) {
-      case 'Best Seller': return 'from-green-500 to-emerald-500';
-      case 'New Arrival': return 'from-blue-500 to-cyan-500';
-      case 'Premium': return 'from-purple-500 to-pink-500';
-      case 'Editor\'s Choice': return 'from-orange-500 to-red-500';
-      case 'Gaming': return 'from-red-500 to-pink-500';
-      case 'Creative': return 'from-indigo-500 to-purple-500';
-      default: return 'from-gray-500 to-gray-600';
+  const getBadgeColor = (product: Product) => {
+    if (product.discount && product.discount > 0) {
+      return 'from-red-500 to-pink-500';
     }
+    if (product.isFeatured) {
+      return 'from-green-500 to-emerald-500';
+    }
+    return 'from-gray-500 to-gray-600';
   };
+
+  const getBadgeText = (product: Product) => {
+    if (product.discount && product.discount > 0) {
+      return `-${product.discount}%`;
+    }
+    if (product.isFeatured) {
+      return 'Featured';
+    }
+    return 'New';
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className="py-20 relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-accent-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-text-secondary">Loading featured products...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className="py-20 relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-red-400 mb-4">Error: {error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // No products state
+  if (products.length === 0) {
+    return (
+      <section className="py-20 relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-text-secondary">No featured products available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={containerRef} className="py-20 relative overflow-hidden">
@@ -201,8 +206,8 @@ export default function FeaturedProducts() {
                           <div className="relative bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
                             {/* Product Badge */}
                             <div className="absolute top-4 left-4 z-10">
-                              <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product.badge)} text-white text-xs font-semibold rounded-full`}>
-                                {product.badge}
+                              <div className={`px-3 py-1 bg-gradient-to-r ${getBadgeColor(product)} text-white text-xs font-semibold rounded-full`}>
+                                {getBadgeText(product)}
                               </div>
                             </div>
 
@@ -269,7 +274,7 @@ export default function FeaturedProducts() {
                                   <span className="text-2xl font-bold text-white">
                                     ${product.price}
                                   </span>
-                                  {product.originalPrice > product.price && (
+                                  {product.originalPrice && product.originalPrice > product.price && (
                                     <span className="text-lg text-text-secondary line-through">
                                       ${product.originalPrice}
                                     </span>
@@ -285,19 +290,21 @@ export default function FeaturedProducts() {
                               </div>
 
                               {/* Add to Cart Button */}
-                              <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                disabled={!product.inStock}
-                                className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
-                                  product.inStock
-                                    ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
-                                    : 'bg-accent-gray text-text-secondary cursor-not-allowed'
-                                }`}
-                              >
-                                <ShoppingCart className="w-5 h-5" />
-                                <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
-                              </motion.button>
+                              <Link href={`/products/${product.id}`}>
+                                <motion.button
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  disabled={!product.inStock}
+                                  className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+                                    product.inStock
+                                      ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white hover:shadow-lg hover:shadow-accent-blue/25'
+                                      : 'bg-accent-gray text-text-secondary cursor-not-allowed'
+                                  }`}
+                                >
+                                  <ShoppingCart className="w-5 h-5" />
+                                  <span>{product.inStock ? 'View Details' : 'Out of Stock'}</span>
+                                </motion.button>
+                              </Link>
                             </div>
                           </div>
                         </motion.div>

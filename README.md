@@ -1,46 +1,41 @@
-# CyberByte - Futuristic E-commerce Website
+# CyberByte E-commerce
 
-A highly interactive, futuristic e-commerce website for computer products built with Next.js, featuring 3D parallax effects, modern animations, and a sleek tech aesthetic.
+A modern, responsive e-commerce website built with Next.js 15, TypeScript, and Tailwind CSS.
 
-## 🚀 Features
+## Features
 
-### 🎨 Design & UI
-- **Futuristic Tech Theme**: Dark color scheme with neon blue and purple accents
-- **3D Parallax Effects**: Smooth scrolling with depth perception
-- **Interactive Animations**: Hover effects, scroll animations, and micro-interactions
-- **Responsive Design**: Fully optimized for all device sizes
-- **Modern Typography**: Orbitron, Poppins, and Roboto fonts
+- 🛍️ **Product Catalog**: Browse and search through a comprehensive product catalog
+- 🎯 **Featured Products**: Highlighted products on the homepage
+- 🔍 **Advanced Search & Filtering**: Search by name, brand, category, and price range
+- 📱 **Responsive Design**: Optimized for all devices
+- 🎨 **Modern UI**: Cyber-themed design with animations and effects
+- 🛒 **Shopping Cart**: Add products to cart (local storage)
+- 👤 **User Authentication**: Login and registration system
+- 🔐 **Admin Dashboard**: Manage products, users, and orders
+- 📊 **Analytics**: Track sales and user activity
 
-### 🛍️ E-commerce Features
-- **Product Catalog**: Comprehensive product listing with filtering and search
-- **Product Details**: Detailed product pages with image galleries and specifications
-- **Shopping Cart**: Full cart functionality with quantity management
-- **Checkout Process**: Streamlined checkout with order summary
-- **Wishlist**: Save products for later
-- **Product Categories**: Organized by laptops, accessories, and components
+## Tech Stack
 
-### ⚡ Technical Features
-- **Next.js 14**: Latest React framework with App Router
-- **TypeScript**: Full type safety throughout the application
-- **Tailwind CSS**: Utility-first CSS framework for styling
-- **Framer Motion**: Advanced animations and transitions
-- **React Hook Form**: Form handling and validation
-- **Local Storage**: Cart persistence across sessions
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Tailwind CSS, Custom CSS
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: Custom JWT-based auth
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
-- **Forms**: React Hook Form, Zod validation
-- **Notifications**: React Hot Toast
 
-## 📦 Installation
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- npm or yarn
+
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/your-username/cyberbyte-ecommerce.git
    cd cyberbyte-ecommerce
    ```
 
@@ -49,137 +44,137 @@ A highly interactive, futuristic e-commerce website for computer products built 
    npm install
    ```
 
-3. **Run the development server**
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory:
+   ```bash
+   # Database
+   DATABASE_URL="postgresql://username:password@localhost:5432/cyberbyte_db?schema=public"
+   
+   # Email configuration (for password reset)
+   EMAIL_HOST="smtp.gmail.com"
+   EMAIL_PORT=587
+   EMAIL_USER="your-email@gmail.com"
+   EMAIL_PASS="your-app-password"
+   
+   # NextAuth configuration
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your-secret-key-here"
+   ```
+
+4. **Set up the database**
+   ```bash
+   # Generate Prisma client
+   npx prisma generate
+   
+   # Push schema to database
+   npx prisma db push
+   
+   # Seed sample data
+   npm run db:seed
+   ```
+
+5. **Start the development server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
+6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🎯 Pages & Features
+## Available Scripts
 
-### 🏠 Home Page
-- Hero section with animated carousel
-- Product categories with hover effects
-- Featured products showcase
-- Company statistics and testimonials
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run db:generate` - Generate Prisma client
+- `npm run db:push` - Push schema to database
+- `npm run db:seed` - Seed sample data
+- `npm run create-admin` - Create admin user
 
-### 🛍️ Products Page
-- Advanced filtering (category, brand, price range)
-- Search functionality with autocomplete
-- Grid and list view options
-- Pagination for large product catalogs
-- Sort by price, rating, and date
+## Project Structure
 
-### 📱 Product Details
-- High-resolution image gallery with zoom
-- Detailed specifications and features
-- Customer reviews and ratings
-- Add to cart and wishlist functionality
-- Related products suggestions
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   ├── admin/             # Admin dashboard pages
+│   ├── products/          # Product pages
+│   └── globals.css        # Global styles
+├── components/            # Reusable components
+│   ├── Home/             # Homepage components
+│   ├── Layout/           # Layout components
+│   └── ProductImage.tsx  # Product image component
+├── contexts/             # React contexts
+├── lib/                  # Utility functions
+└── data/                 # Static data
+```
 
-### 🛒 Shopping Cart
-- Item quantity management
-- Price calculations with discounts
-- Move items to wishlist
-- Order summary with tax and shipping
-- Checkout process
+## Database Schema
 
-### ℹ️ About Page
-- Company timeline and milestones
-- Team member profiles
-- Company values and mission
-- Statistics and achievements
+The application uses the following main models:
 
-## 🎨 Design System
+- **User**: Customer accounts
+- **Admin**: Admin accounts
+- **Product**: Product catalog
+- **Order**: Customer orders
+- **OrderItem**: Order line items
+- **ResetToken**: Password reset tokens
+- **SiteSettings**: Site configuration
 
-### Colors
-- **Primary Black**: `#0a0a0a`
-- **Secondary Black**: `#1a1a1a`
-- **Accent Blue**: `#00d4ff`
-- **Accent Purple**: `#8b5cf6`
-- **Accent Silver**: `#c0c0c0`
-- **Text Primary**: `#ffffff`
-- **Text Secondary**: `#a0a0a0`
-
-### Typography
-- **Headings**: Orbitron (Futuristic)
-- **Body Text**: Poppins (Modern)
-- **UI Elements**: Roboto (Clean)
-
-### Components
-- **Glass Effect**: Backdrop blur with transparency
-- **Neon Glow**: Subtle glowing effects
-- **Hover Lift**: 3D lift effect on hover
-- **Tech Border**: Animated gradient borders
-
-## 🚀 Performance Features
-
-- **Image Optimization**: Next.js Image component
-- **Code Splitting**: Automatic route-based splitting
-- **Lazy Loading**: Components load as needed
-- **SEO Optimized**: Meta tags and structured data
-- **Fast Loading**: Optimized bundle size
-
-## 📱 Responsive Breakpoints
-
-- **Mobile**: 320px - 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: 1024px - 1440px
-- **Large Desktop**: 1440px+
-
-## 🎭 Animation Features
-
-- **Scroll Animations**: Elements animate on scroll
-- **Parallax Effects**: Different scroll speeds for depth
-- **Hover Interactions**: Smooth hover transitions
-- **Page Transitions**: Smooth navigation between pages
-- **Loading States**: Engaging loading animations
-
-## 🔧 Customization
-
-### Adding New Products
-1. Update the mock data in product pages
-2. Add product images to the public folder
-3. Update the product interface types
-
-### Styling Changes
-1. Modify `tailwind.config.ts` for theme colors
-2. Update `globals.css` for custom styles
-3. Adjust component-specific styles
-
-### Adding New Pages
-1. Create new page in `src/app/`
-2. Add navigation links in `Header.tsx`
-3. Update routing as needed
-
-## 🚀 Deployment
+## Deployment
 
 ### Vercel (Recommended)
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Deploy automatically
 
-### Other Platforms
-1. Build the project: `npm run build`
-2. Deploy the `out` folder to your hosting platform
+1. **Connect your GitHub repository to Vercel**
+2. **Set environment variables in Vercel dashboard**
+3. **Deploy automatically on push to main branch**
 
-## 📄 License
+### Manual Deployment
 
-This project is licensed under the MIT License.
+1. **Build the application**
+   ```bash
+   npm run build
+   ```
 
-## 🤝 Contributing
+2. **Start the production server**
+   ```bash
+   npm start
+   ```
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `EMAIL_HOST` | SMTP server host | No |
+| `EMAIL_PORT` | SMTP server port | No |
+| `EMAIL_USER` | SMTP username | No |
+| `EMAIL_PASS` | SMTP password | No |
+| `NEXTAUTH_URL` | Application URL | Yes |
+| `NEXTAUTH_SECRET` | JWT secret key | Yes |
+
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📞 Support
+## License
 
-For support or questions, please contact us at support@cyberbyte.com
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+If you have any questions or need help, please open an issue on GitHub.
 
 ---
 
-**CyberByte** - Where Technology Meets Innovation 🚀
+**Note**: This is a demo project. For production use, ensure you:
+- Use a secure database
+- Implement proper error handling
+- Add comprehensive testing
+- Set up monitoring and logging
+- Follow security best practices

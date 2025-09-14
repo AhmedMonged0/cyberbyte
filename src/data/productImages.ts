@@ -82,8 +82,14 @@ export const productImages = {
   }
 };
 
+// Type for product image data
+export type ProductImageData = {
+  main: string;
+  gallery: string[];
+};
+
 // Function to get product image
-export const getProductImage = (category: string, productId: string) => {
+export const getProductImage = (category: string, productId: string): ProductImageData | null => {
   const categoryImages = productImages[category as keyof typeof productImages];
   if (!categoryImages) return null;
   

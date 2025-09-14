@@ -205,14 +205,36 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
               </motion.button>
             </Link>
 
-            {/* User Account */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 rounded-lg bg-accent-gray hover:bg-accent-blue/20 transition-colors duration-300"
-            >
-              <User className="w-5 h-5" />
-            </motion.button>
+            {/* User Account Dropdown */}
+            <div className="relative">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="p-2 rounded-lg bg-accent-gray hover:bg-accent-blue/20 transition-colors duration-300"
+              >
+                <User className="w-5 h-5" />
+              </motion.button>
+              
+              {/* Auth Links */}
+              <div className="absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-xl z-50 hidden group-hover:block">
+                <div className="py-2">
+                  <Link
+                    href="/login"
+                    className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
+                  >
+                    <User className="w-4 h-4 mr-3" />
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="flex items-center px-4 py-2 text-text-secondary hover:text-accent-blue hover:bg-accent-gray transition-all duration-300"
+                  >
+                    <User className="w-4 h-4 mr-3" />
+                    Sign Up
+                  </Link>
+                </div>
+              </div>
+            </div>
 
             {/* Mobile Menu Button */}
             <motion.button

@@ -358,12 +358,12 @@ export default function ProductsPage() {
                 </div>
               ) : (
                 paginatedProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="group"
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="group"
                 >
                   {viewMode === 'grid' ? (
                     // Grid View
@@ -595,9 +595,9 @@ export default function ProductsPage() {
                       </div>
                     </div>
                   )}
-                </motion.div>
-              ))
-            }
+                  </motion.div>
+                ))
+              }
             </div>
 
             {/* Pagination */}

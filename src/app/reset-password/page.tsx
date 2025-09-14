@@ -52,7 +52,8 @@ export default function ResetPasswordPage() {
   }, [token, router])
 
   useEffect(() => {
-    if (token) {
+    // Only verify token if it exists in URL
+    if (token && token.length > 0) {
       verifyToken()
     }
   }, [token, verifyToken])
@@ -135,7 +136,8 @@ export default function ResetPasswordPage() {
     }
   }
 
-  if (step === 'email') {
+  // Show email form if no token or step is email
+  if (!token || step === 'email') {
     return (
       <AuthForm
         title="نسيان كلمة المرور"

@@ -55,13 +55,18 @@ export default function Layout({ children }: LayoutProps) {
     );
   }
 
+  // Pages that should not show header and footer
+  const authPages = ['/login', '/register', '/reset-password'];
+  const shouldShowHeader = pathname !== '/' && !authPages.includes(pathname);
+  const shouldShowFooter = !authPages.includes(pathname);
+
   return (
     <div className="min-h-screen">
-      {pathname !== '/' && <Header cartCount={cartCount} onSearch={handleSearch} />}
-      <main className="relative z-10 pt-16">
+      {shouldShowHeader && <Header cartCount={cartCount} onSearch={handleSearch} />}
+      <main className={`relative z-10 ${shouldShowHeader ? 'pt-16' : ''}`}>
         {children}
       </main>
-      <Footer />
+      {shouldShowFooter && <Footer />}
       <Toaster
         position="top-right"
         toastOptions={{

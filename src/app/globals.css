@@ -174,13 +174,48 @@ html {
   overflow-x: hidden;
 }
 
+/* Force dark mode from the start */
+html {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
+html.dark {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
+/* Critical CSS to prevent flash */
+html:not(.dark) {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
+/* Ensure body starts dark */
+body:not(.light) {
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
-  background: var(--primary-black);
-  color: var(--text-primary);
+  background: var(--primary-black) !important;
+  color: var(--text-primary) !important;
   overflow-x: hidden;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure all elements start in dark mode */
+* {
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Force dark mode for all elements initially */
+html.dark * {
+  background-color: transparent;
+  color: inherit;
 }
 
 /* Light mode body */

@@ -45,3 +45,4 @@ export default function AuthForm({ children, title, subtitle, icon }: AuthFormPr
     </div>
   );
 }
+

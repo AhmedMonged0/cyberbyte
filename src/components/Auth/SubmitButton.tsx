@@ -36,3 +36,4 @@ export default function SubmitButton({
     </motion.button>
   );
 }
+

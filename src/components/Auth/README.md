@@ -92,3 +92,4 @@ function MyComponent() {
   // Use authentication methods
 }
 ```
+

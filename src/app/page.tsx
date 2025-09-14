@@ -1,15 +1,21 @@
+'use client';
+
 import HeroSection from '@/components/Home/HeroSection';
 import ProductCategories from '@/components/Home/ProductCategories';
 import FeaturedProducts from '@/components/Home/FeaturedProducts';
+import Header from '@/components/Layout/Header';
 
 export default function Home() {
+  const handleSearch = (query: string) => {
+    console.log('Search query:', query);
+  };
+
   return (
-    <div className="min-h-screen bg-primary-black overflow-x-hidden">
+    <div className="bg-gradient-tech overflow-x-hidden">
+      <Header cartCount={0} onSearch={handleSearch} />
       <HeroSection />
-      <div className="bg-gradient-tech overflow-x-hidden">
-        <ProductCategories />
-        <FeaturedProducts />
-      </div>
+      <ProductCategories />
+      <FeaturedProducts />
     </div>
   );
 }

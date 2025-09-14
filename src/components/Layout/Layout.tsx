@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Header from './Header';
 import Footer from './Footer';
 import { Toaster } from 'react-hot-toast';
+import { usePathname } from 'next/navigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [cartCount, setCartCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Simulate loading
@@ -54,9 +56,9 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-primary-black">
-      <Header cartCount={cartCount} onSearch={handleSearch} />
-      <main className="pt-16 relative z-10">
+    <div className="min-h-screen">
+      {pathname !== '/' && <Header cartCount={cartCount} onSearch={handleSearch} />}
+      <main className="relative z-10 pt-16">
         {children}
       </main>
       <Footer />

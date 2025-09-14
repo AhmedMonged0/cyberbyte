@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ChevronRight, Play, Star, Zap, Shield, Award } from 'lucide-react';
+import { ChevronRight, Play } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HeroSection() {
@@ -13,8 +13,8 @@ export default function HeroSection() {
     offset: ["start start", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.8]);
 
   const heroSlides = [
     {
@@ -53,15 +53,9 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
-  const stats = [
-    { icon: Star, value: "4.9/5", label: "Customer Rating" },
-    { icon: Zap, value: "24/7", label: "Fast Delivery" },
-    { icon: Shield, value: "2 Year", label: "Warranty" },
-    { icon: Award, value: "10K+", label: "Happy Customers" }
-  ];
 
   return (
-    <section ref={containerRef} className="relative min-h-screen overflow-hidden bg-gradient-tech z-0">
+    <section ref={containerRef} className="relative min-h-screen bg-gradient-tech z-0">
       {/* Animated Background */}
       <div className="absolute inset-0 tech-pattern opacity-30" />
       
@@ -92,7 +86,7 @@ export default function HeroSection() {
       {/* Hero Content */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 h-full flex items-center pt-32 pb-20"
+        className="relative z-10 h-full flex items-center pt-16 pb-20"
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -173,29 +167,6 @@ export default function HeroSection() {
                 </motion.button>
               </motion.div>
 
-              {/* Stats */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-16 pb-8"
-              >
-                {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 1.2 + index * 0.1 }}
-                className="text-center bg-gradient-to-br from-accent-gray/20 to-accent-gray/10 backdrop-blur-sm border border-accent-blue/20 p-6 rounded-2xl hover:border-accent-blue/40 hover:bg-accent-blue/5 transition-all duration-300 group"
-              >
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-accent-blue/25 transition-all duration-300">
-                  <stat.icon className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{stat.value}</div>
-                <div className="text-sm text-text-secondary font-medium">{stat.label}</div>
-              </motion.div>
-                ))}
-              </motion.div>
             </motion.div>
 
           </div>

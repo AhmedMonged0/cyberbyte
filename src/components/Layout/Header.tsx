@@ -29,6 +29,14 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -70,7 +78,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`sticky top-0 left-0 right-0 z-[99998] transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[99998] transition-all duration-300 ${
         isScrolled 
           ? 'glass-card backdrop-blur-md shadow-neon' 
           : 'bg-primary-black/90 backdrop-blur-sm'
@@ -113,7 +121,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
             </Link>
             
             {/* Categories Dropdown */}
-            <div className="relative categories-dropdown">
+            <div className="relative categories-dropdown z-[999999999]">
               <button 
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
                 className="text-text-secondary hover:text-accent-blue transition-colors duration-300 font-medium flex items-center space-x-1"
@@ -134,7 +142,8 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="fixed top-16 left-1/2 transform -translate-x-1/2 w-48 glass-card rounded-lg shadow-xl z-[9999] mt-2"
+                    className="fixed left-50 top-20 w-48 glass-card rounded-lg shadow-xl"
+                    style={{ zIndex: 999999999 }}
                   >
                 <div className="py-2">
                   {categories.map((category) => (
@@ -214,7 +223,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
             </Link>
 
             {/* User Account Dropdown */}
-            <div className="relative user-menu-dropdown">
+            <div className="relative user-menu-dropdown z-[999999999]">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -232,7 +241,8 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 top-full mt-2 w-48 glass-card rounded-lg shadow-xl z-[99999]"
+                    className="fixed right-4 top-20 w-48 glass-card rounded-lg shadow-xl"
+                    style={{ zIndex: 999999999 }}
                   >
                     <div className="py-2">
                       {user ? (
@@ -295,7 +305,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 rounded-lg bg-accent-gray hover:bg-accent-blue/20 transition-colors duration-300"
+              className="p-2 rounded-lg bg-accent-gray hover:bg-accent-blue/20 transition-colors duration-300"
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </motion.button>
@@ -309,7 +319,7 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden mt-4 glass-card rounded-lg overflow-hidden z-[9999]"
+              className="mt-4 glass-card rounded-lg overflow-hidden z-[99999]"
             >
               <div className="py-4">
                 <Link 

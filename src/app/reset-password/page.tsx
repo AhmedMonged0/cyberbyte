@@ -1,261 +1,255 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Mail, ArrowLeft, CheckCircle, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react'
+import AuthForm from '@/components/Auth/AuthForm'
+import FormField from '@/components/Auth/FormField'
+import SubmitButton from '@/components/Auth/SubmitButton'
+import toast from 'react-hot-toast'
 
 export default function ResetPasswordPage() {
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const token = searchParams.get('token')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    // Clear error when user starts typing
-    if (errors.email) {
-      setErrors(prev => ({
-        ...prev,
-        email: ''
-      }));
+  const [step, setStep] = useState<'email' | 'reset'>('email')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    if (token) {
+      verifyToken()
     }
-  };
+  }, [token])
 
-  const validateEmail = () => {
-    if (!email) {
-      setErrors({ email: 'Email is required' });
-      return false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setErrors({ email: 'Email is invalid' });
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateEmail()) return;
-
-    setIsLoading(true);
-    
+  const verifyToken = async () => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Handle successful password reset request
-      setIsSubmitted(true);
-      
+      setIsLoading(true)
+      const response = await fetch('/api/auth/verify-reset-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setUser(data.user)
+        setStep('reset')
+      } else {
+        toast.error(data.error || 'Invalid or expired token')
+        router.push('/login')
+      }
     } catch (error) {
-      console.error('Password reset error:', error);
-      setErrors({ general: 'Failed to send reset email. Please try again.' });
+      toast.error('حدث خطأ في التحقق من الرابط')
+      router.push('/login')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
-  if (isSubmitted) {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setErrors({})
+
+    try {
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')
+        setStep('reset')
+      } else {
+        setErrors({ email: data.error || 'حدث خطأ في إرسال البريد الإلكتروني' })
+      }
+    } catch (error) {
+      toast.error('حدث خطأ في إرسال البريد الإلكتروني')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setErrors({})
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setErrors({ confirmPassword: 'كلمات المرور غير متطابقة' })
+      setIsLoading(false)
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setErrors({ password: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' })
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/auth/update-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          token, 
+          password: formData.password 
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success('تم تحديث كلمة المرور بنجاح')
+        router.push('/login')
+      } else {
+        setErrors({ password: data.error || 'حدث خطأ في تحديث كلمة المرور' })
+      }
+    } catch (error) {
+      toast.error('حدث خطأ في تحديث كلمة المرور')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }))
+    }
+  }
+
+  if (step === 'email') {
     return (
-      <div className="min-h-screen bg-primary-black tech-grid flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          {/* Back Button */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Link 
-              href="/login"
-              className="inline-flex items-center text-text-secondary hover:text-accent-blue transition-colors duration-300"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Login
-            </Link>
-          </motion.div>
+      <AuthForm
+        title="نسيان كلمة المرور"
+        subtitle="أدخل بريدك الإلكتروني لإرسال رابط إعادة التعيين"
+        icon={<Lock className="h-6 w-6 text-white" />}
+      >
+        <form onSubmit={handleEmailSubmit} className="space-y-6">
+          <FormField
+            label="البريد الإلكتروني"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            error={errors.email}
+            placeholder="أدخل بريدك الإلكتروني"
+            required
+          />
 
-          {/* Success Message */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-center"
+          <SubmitButton
+            isLoading={isLoading}
+            loadingText="جاري الإرسال..."
           >
-            <div className="mx-auto h-16 w-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle className="h-8 w-8 text-green-400" />
-            </div>
-            <h2 className="text-3xl font-orbitron font-bold text-gradient-neon mb-4">
-              Check Your Email
-            </h2>
-            <p className="text-text-secondary mb-6">
-              We've sent a password reset link to <span className="text-accent-blue font-medium">{email}</span>
-            </p>
-            <div className="glass-card rounded-xl p-6 space-y-4">
-              <p className="text-sm text-text-secondary">
-                If you don't see the email in your inbox, please check your spam folder or try again.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => {
-                    setIsSubmitted(false);
-                    setEmail('');
-                  }}
-                  className="flex-1 py-2 px-4 bg-accent-gray hover:bg-accent-blue/20 text-text-primary rounded-lg transition-colors duration-300"
-                >
-                  Try Different Email
-                </button>
-                <Link
-                  href="/login"
-                  className="flex-1 py-2 px-4 bg-gradient-neon hover:shadow-neon text-white rounded-lg transition-all duration-300 text-center flex items-center justify-center"
-                >
-                  Back to Login
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
+            إرسال رابط إعادة التعيين
+          </SubmitButton>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => router.push('/login')}
+              className="text-sm text-text-secondary hover:text-gradient-neon transition-colors"
+            >
+              العودة إلى تسجيل الدخول
+            </button>
+          </div>
+        </form>
+      </AuthForm>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-primary-black tech-grid flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Link 
-            href="/login"
-            className="inline-flex items-center text-text-secondary hover:text-accent-blue transition-colors duration-300"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Login
-          </Link>
-        </motion.div>
-
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-center"
-        >
-          <div className="mx-auto h-12 w-12 bg-gradient-neon rounded-lg flex items-center justify-center shadow-neon">
-            <Mail className="h-6 w-6 text-white" />
-          </div>
-          <h2 className="mt-6 text-3xl font-orbitron font-bold text-gradient-neon">
-            Reset Password
-          </h2>
-          <p className="mt-2 text-sm text-text-secondary">
-            Enter your email address and we'll send you a link to reset your password
-          </p>
-        </motion.div>
-
-        {/* Form */}
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mt-8 space-y-6"
-          onSubmit={handleSubmit}
-        >
-          <div className="glass-card rounded-xl p-8 space-y-6">
-            {/* General Error */}
-            {errors.general && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm"
-              >
-                {errors.general}
-              </motion.div>
-            )}
-
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-text-secondary" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-3 bg-accent-gray border rounded-lg text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/20 focus:border-accent-blue transition-all duration-300 ${
-                    errors.email ? 'border-red-500' : 'border-accent-blue/30'
-                  }`}
-                  placeholder="Enter your email address"
-                />
-              </div>
-              {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1 text-sm text-red-400"
-                >
-                  {errors.email}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <motion.button
-              type="submit"
-              disabled={isLoading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-neon hover:shadow-neon focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+    <AuthForm
+      title="إعادة تعيين كلمة المرور"
+      subtitle={`مرحباً ${user?.firstName}، أدخل كلمة المرور الجديدة`}
+      icon={<Lock className="h-6 w-6 text-white" />}
+    >
+      <form onSubmit={handlePasswordSubmit} className="space-y-6">
+        <FormField
+          label="كلمة المرور الجديدة"
+          type={showPassword ? 'text' : 'password'}
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          error={errors.password}
+          placeholder="أدخل كلمة المرور الجديدة"
+          required
+          icon={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Sending reset link...
-                </div>
+              {showPassword ? (
+                <EyeOff className="h-5 w-5 text-text-secondary" />
               ) : (
-                'Send Reset Link'
+                <Eye className="h-5 w-5 text-text-secondary" />
               )}
-            </motion.button>
+            </button>
+          }
+        />
 
-            {/* Additional Info */}
-            <div className="text-center">
-              <p className="text-sm text-text-secondary">
-                Remember your password?{' '}
-                <Link
-                  href="/login"
-                  className="font-medium text-accent-blue hover:text-accent-purple transition-colors duration-300"
-                >
-                  Sign in here
-                </Link>
-              </p>
-            </div>
+        <FormField
+          label="تأكيد كلمة المرور"
+          type={showConfirmPassword ? 'text' : 'password'}
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+          error={errors.confirmPassword}
+          placeholder="أعد إدخال كلمة المرور"
+          required
+          icon={
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-5 w-5 text-text-secondary" />
+              ) : (
+                <Eye className="h-5 w-5 text-text-secondary" />
+              )}
+            </button>
+          }
+        />
 
-            {/* Help Text */}
-            <div className="bg-accent-gray/30 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-text-primary mb-2">Need Help?</h3>
-              <p className="text-xs text-text-secondary">
-                If you're having trouble accessing your account, please contact our support team at{' '}
-                <a 
-                  href="mailto:support@cyberbyte.com" 
-                  className="text-accent-blue hover:text-accent-purple transition-colors duration-300"
-                >
-                  support@cyberbyte.com
-                </a>
-              </p>
-            </div>
-          </div>
-        </motion.form>
-      </div>
-    </div>
-  );
+        <SubmitButton
+          isLoading={isLoading}
+          loadingText="جاري التحديث..."
+        >
+          تحديث كلمة المرور
+        </SubmitButton>
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => router.push('/login')}
+            className="text-sm text-text-secondary hover:text-gradient-neon transition-colors"
+          >
+            العودة إلى تسجيل الدخول
+          </button>
+        </div>
+      </form>
+    </AuthForm>
+  )
 }

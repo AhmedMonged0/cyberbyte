@@ -2,10 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -56,16 +62,18 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const success = await login(formData.email, formData.password);
       
-      // Handle successful login
-      console.log('Login successful:', formData);
-      // Redirect to dashboard or home page
+      if (success) {
+        toast.success('تم تسجيل الدخول بنجاح');
+        router.push('/');
+      } else {
+        setErrors({ general: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
+      }
       
     } catch (error) {
       console.error('Login error:', error);
-      setErrors({ general: 'Login failed. Please try again.' });
+      setErrors({ general: 'حدث خطأ في تسجيل الدخول. حاول مرة أخرى.' });
     } finally {
       setIsLoading(false);
     }

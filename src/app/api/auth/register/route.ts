@@ -12,50 +12,55 @@ const registerSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('API route called');
     const body = await request.json()
+    console.log('Request body:', body);
+    
     const { firstName, lastName, email, password } = registerSchema.parse(body)
+    console.log('Parsed data:', { firstName, lastName, email });
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12)
+    console.log('Password hashed');
+    
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     })
 
     if (existingUser) {
+      console.log('User already exists');
       return NextResponse.json(
         { error: 'User already exists with this email' },
         { status: 400 }
       )
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
-
-    // Create user
+    // Create user in database
     const user = await prisma.user.create({
       data: {
         firstName,
         lastName,
         email,
         password: hashedPassword,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        createdAt: true,
       }
     })
 
+    console.log('Created user:', user);
+
+    console.log('Returning success response');
+    // Return user data without password
+    const { password: _, ...userWithoutPassword } = user
     return NextResponse.json({
       message: 'User created successfully',
-      user
+      user: userWithoutPassword
     }, { status: 201 })
 
   } catch (error) {
     console.error('Registration error:', error)
     
     if (error instanceof z.ZodError) {
+      console.log('Validation error:', error.issues);
       return NextResponse.json(
         { error: 'Validation error', details: error.issues },
         { status: 400 }

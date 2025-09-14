@@ -22,6 +22,11 @@ export const metadata: Metadata = {
     title: 'CyberByte - Premium Computer Products',
     description: 'Your premier destination for cutting-edge computer products.',
   },
+  other: {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  }
 };
 
 export default function RootLayout({

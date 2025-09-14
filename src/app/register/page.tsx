@@ -2,10 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Check } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { register, isLoading: authLoading } = useAuth();
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -17,6 +23,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,8 +60,8 @@ export default function RegisterPage() {
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
       newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
     }
@@ -69,6 +76,7 @@ export default function RegisterPage() {
       newErrors.agreeToTerms = 'You must agree to the terms and conditions';
     }
 
+    console.log('Validation errors:', newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,28 +84,74 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    // Prevent multiple submissions
+    if (isSubmitting || authLoading) {
+      console.log('Already submitting, ignoring...');
+      return;
+    }
+    
+    console.log('=== NEW REGISTRATION ATTEMPT ===');
+    console.log('Form submitted with data:', formData);
+    
+    if (!validateForm()) {
+      console.log('Form validation failed');
+      return;
+    }
 
-    setIsLoading(true);
+    console.log('Form validation passed, starting registration...');
+    setIsSubmitting(true);
+    setErrors({});
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Handle successful registration
-      console.log('Registration successful:', formData);
-      // Redirect to login page or dashboard
+      console.log('Calling register function from AuthContext...');
+      const success = await register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log('=== REGISTRATION RESULT ===');
+      console.log('Success:', success);
+
+      if (success) {
+        console.log('✅ Registration successful! Showing success message...');
+        
+        // Show success message in the UI
+        setErrors({ success: 'Account created successfully! Redirecting to homepage...' });
+        
+        // Show toast notification
+        toast.success('🎉 Account created successfully!', {
+          duration: 4000,
+          style: {
+            background: '#10b981',
+            color: '#ffffff',
+            fontSize: '16px',
+            fontWeight: 'bold',
+          },
+        });
+        
+        // Add a delay to ensure user sees the success message
+        setTimeout(() => {
+          console.log('Redirecting to homepage...');
+          router.push('/');
+        }, 3000);
+      } else {
+        console.log('❌ Registration failed');
+        setErrors({ general: 'Registration failed. Please try again.' });
+      }
       
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('❌ Registration error:', error);
       setErrors({ general: 'Registration failed. Please try again.' });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
+      console.log('=== REGISTRATION PROCESS COMPLETED ===');
     }
   };
 
   const passwordRequirements = [
-    { text: 'At least 8 characters', met: formData.password.length >= 8 },
+    { text: 'At least 6 characters', met: formData.password.length >= 6 },
     { text: 'One uppercase letter', met: /[A-Z]/.test(formData.password) },
     { text: 'One lowercase letter', met: /[a-z]/.test(formData.password) },
     { text: 'One number', met: /\d/.test(formData.password) },
@@ -148,6 +202,23 @@ export default function RegisterPage() {
           onSubmit={handleSubmit}
         >
           <div className="glass-card rounded-xl p-8 space-y-6">
+            {/* Success Message */}
+            {errors.success && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-green-400 text-sm text-center"
+              >
+                <div className="flex items-center justify-center mb-2">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-2">
+                    <span className="text-white text-sm">✓</span>
+                  </div>
+                  <span className="font-semibold">Success!</span>
+                </div>
+                {errors.success}
+              </motion.div>
+            )}
+
             {/* General Error */}
             {errors.general && (
               <motion.div
@@ -417,12 +488,23 @@ export default function RegisterPage() {
             {/* Submit Button */}
             <motion.button
               type="submit"
-              disabled={isLoading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-neon hover:shadow-neon focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              disabled={isSubmitting || authLoading || errors.success}
+              whileHover={{ scale: (isSubmitting || authLoading || errors.success) ? 1 : 1.02 }}
+              whileTap={{ scale: (isSubmitting || authLoading || errors.success) ? 1 : 0.98 }}
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white transition-all duration-300 ${
+                errors.success 
+                  ? 'bg-green-500 hover:bg-green-600' 
+                  : 'bg-gradient-neon hover:shadow-neon focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-blue'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {isLoading ? (
+              {errors.success ? (
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center mr-2">
+                    <span className="text-green-500 text-xs">✓</span>
+                  </div>
+                  Account Created!
+                </div>
+              ) : (isSubmitting || authLoading) ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Creating account...

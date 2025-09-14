@@ -97,8 +97,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string;
     password: string;
   }): Promise<boolean> => {
+    // Prevent multiple simultaneous registrations
+    if (isLoading) {
+      console.log('Registration already in progress, ignoring...');
+      return false;
+    }
+
     try {
       setIsLoading(true);
+      console.log('Starting registration with:', userData);
       
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -108,9 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(userData),
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (!response.ok) {
+        console.error('Registration failed:', data.error);
         throw new Error(data.error || 'Registration failed');
       }
 
@@ -121,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         lastName: data.user.lastName,
       };
       
+      console.log('Setting user:', newUser);
       setUser(newUser);
       localStorage.setItem('auth_token', 'demo_token');
       localStorage.setItem('user_data', JSON.stringify(newUser));

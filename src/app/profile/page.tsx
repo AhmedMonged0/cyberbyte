@@ -143,14 +143,20 @@ export default function ProfilePage() {
                 <p className="text-sm text-text-secondary">Update your account password</p>
               </button>
               <button 
-                onClick={() => setIsEmailModalOpen(true)}
+                onClick={() => {
+                  console.log('Email button clicked');
+                  setIsEmailModalOpen(true);
+                }}
                 className="w-full text-left p-4 bg-accent-gray/30 hover:bg-accent-blue/30 hover:backdrop-blur-sm hover:border-accent-blue/50 border border-transparent hover:border-accent-blue/30 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent-blue/20"
               >
                 <h3 className="font-medium text-text-primary">Email Preferences</h3>
                 <p className="text-sm text-text-secondary">Manage your email notifications</p>
               </button>
               <button 
-                onClick={() => setIsPrivacyModalOpen(true)}
+                onClick={() => {
+                  console.log('Privacy button clicked');
+                  setIsPrivacyModalOpen(true);
+                }}
                 className="w-full text-left p-4 bg-accent-gray/30 hover:bg-accent-blue/30 hover:backdrop-blur-sm hover:border-accent-blue/50 border border-transparent hover:border-accent-blue/30 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent-blue/20"
               >
                 <h3 className="font-medium text-text-primary">Privacy Settings</h3>

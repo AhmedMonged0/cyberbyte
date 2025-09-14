@@ -11,6 +11,8 @@ interface EmailPreferencesModalProps {
 }
 
 export default function EmailPreferencesModal({ isOpen, onClose }: EmailPreferencesModalProps) {
+  console.log('EmailPreferencesModal rendered, isOpen:', isOpen);
+  
   const [preferences, setPreferences] = useState({
     orderUpdates: true,
     promotions: false,

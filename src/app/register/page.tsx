@@ -22,7 +22,7 @@ export default function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -488,9 +488,9 @@ export default function RegisterPage() {
             {/* Submit Button */}
             <motion.button
               type="submit"
-              disabled={isSubmitting || authLoading || errors.success}
-              whileHover={{ scale: (isSubmitting || authLoading || errors.success) ? 1 : 1.02 }}
-              whileTap={{ scale: (isSubmitting || authLoading || errors.success) ? 1 : 0.98 }}
+              disabled={isSubmitting || authLoading || !!errors.success}
+              whileHover={{ scale: (isSubmitting || authLoading || !!errors.success) ? 1 : 1.02 }}
+              whileTap={{ scale: (isSubmitting || authLoading || !!errors.success) ? 1 : 0.98 }}
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white transition-all duration-300 ${
                 errors.success 
                   ? 'bg-green-500 hover:bg-green-600' 

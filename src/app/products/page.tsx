@@ -190,26 +190,42 @@ export default function ProductsPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
-              <motion.button
-                key={category.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
-                  selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white shadow-lg shadow-accent-blue/30'
-                    : 'bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30'
-                }`}
-              >
-                <span>{category.name}</span>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  selectedCategory === category.id
-                    ? 'bg-white/20 text-white'
-                    : 'bg-accent-blue/20 text-accent-blue'
-                }`}>
-                  {category.count}
-                </span>
-              </motion.button>
+              <motion.div key={category.id}>
+                {category.id === 'all' ? (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
+                      selectedCategory === category.id
+                        ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white shadow-lg shadow-accent-blue/30'
+                        : 'bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30'
+                    }`}
+                  >
+                    <span>{category.name}</span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      selectedCategory === category.id
+                        ? 'bg-white/20 text-white'
+                        : 'bg-accent-blue/20 text-accent-blue'
+                    }`}>
+                      {category.count}
+                    </span>
+                  </motion.button>
+                ) : (
+                  <Link href={`/products/${category.id}`}>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30 cursor-pointer"
+                    >
+                      <span>{category.name}</span>
+                      <span className="px-2 py-1 rounded-full text-xs bg-accent-blue/20 text-accent-blue">
+                        {category.count}
+                      </span>
+                    </motion.div>
+                  </Link>
+                )}
+              </motion.div>
             ))}
           </div>
         </div>

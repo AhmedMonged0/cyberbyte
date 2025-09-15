@@ -69,9 +69,9 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
   };
 
   const categories = [
-    { name: 'Laptops', icon: Laptop, href: '/products?category=laptops' },
-    { name: 'Accessories', icon: Headphones, href: '/products?category=accessories' },
-    { name: 'Components', icon: Cpu, href: '/products?category=components' },
+    { name: 'Laptops', icon: Laptop, href: '/products/laptops' },
+    { name: 'Accessories', icon: Headphones, href: '/products/accessories' },
+    { name: 'Components', icon: Cpu, href: '/products/components' },
   ];
 
   return (

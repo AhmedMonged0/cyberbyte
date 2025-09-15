@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useCart } from '@/contexts/CartContext';
 
 interface Product {
   id: string;
@@ -53,6 +54,7 @@ export default function ProductDetailsPage() {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -135,8 +137,14 @@ export default function ProductDetailsPage() {
   };
 
   const handleAddToCart = () => {
-    setIsAddedToCart(true);
-    setTimeout(() => setIsAddedToCart(false), 2000);
+    if (product) {
+      // Add the product to cart with the selected quantity
+      for (let i = 0; i < quantity; i++) {
+        addToCart(product);
+      }
+      setIsAddedToCart(true);
+      setTimeout(() => setIsAddedToCart(false), 2000);
+    }
   };
 
   const handleWishlist = () => {

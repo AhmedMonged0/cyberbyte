@@ -12,7 +12,6 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [cartCount, setCartCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
 
@@ -21,14 +20,6 @@ export default function Layout({ children }: LayoutProps) {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-
-    // Load cart count from localStorage
-    const savedCart = localStorage.getItem('cyberbyte-cart');
-    if (savedCart) {
-      const cart: { quantity: number }[] = JSON.parse(savedCart);
-      const count = cart.reduce((total: number, item: { quantity: number }) => total + item.quantity, 0);
-      setCartCount(count);
-    }
 
     return () => clearTimeout(timer);
   }, []);
@@ -62,7 +53,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen">
-      {shouldShowHeader && <Header cartCount={cartCount} onSearch={handleSearch} />}
+      {shouldShowHeader && <Header cartCount={0} onSearch={handleSearch} />}
       <main className={`relative z-10 ${shouldShowHeader ? 'pt-16' : ''}`}>
         {children}
       </main>

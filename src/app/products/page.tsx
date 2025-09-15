@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { getProductImage, getFallbackImage } from '@/data/productImages';
 import ProductImage from '@/components/ProductImage';
+import { useCart } from '@/contexts/CartContext';
 
 interface Product {
   id: string;
@@ -49,55 +50,7 @@ export default function ProductsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [cartItems, setCartItems] = useState<any[]>([]);
-
-  // Load cart from localStorage on component mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('cyberbyte-cart');
-    if (savedCart) {
-      try {
-        const cartData = JSON.parse(savedCart);
-        setCartItems(Array.isArray(cartData) ? cartData : []);
-      } catch (error) {
-        console.error('Error parsing cart data:', error);
-        setCartItems([]);
-      }
-    }
-  }, []);
-
-  // Add to cart function
-  const addToCart = (product: Product) => {
-    const existingItem = cartItems.find(item => item.id === product.id);
-    
-    if (existingItem) {
-      // Update quantity if item already exists
-      const updatedCart = cartItems.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-      setCartItems(updatedCart);
-      localStorage.setItem('cyberbyte-cart', JSON.stringify(updatedCart));
-    } else {
-      // Add new item to cart
-      const newItem = {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        originalPrice: product.originalPrice,
-        image: product.image,
-        quantity: 1,
-        inStock: product.inStock,
-        discount: product.discount
-      };
-      const updatedCart = [...cartItems, newItem];
-      setCartItems(updatedCart);
-      localStorage.setItem('cyberbyte-cart', JSON.stringify(updatedCart));
-    }
-    
-    // Show success message (you can add a toast notification here)
-    console.log('Product added to cart:', product.name);
-  };
+  const { addToCart } = useCart();
 
   // Function to get product image
   const getProductImageSrc = (product: Product) => {

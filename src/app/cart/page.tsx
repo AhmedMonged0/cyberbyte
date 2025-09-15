@@ -15,6 +15,7 @@ import {
   Check
 } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/contexts/CartContext';
 
 interface CartItem {
   id: number;
@@ -28,48 +29,11 @@ interface CartItem {
 }
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-
-  useEffect(() => {
-    // Load cart from localStorage
-    const savedCart = localStorage.getItem('cyberbyte-cart');
-    if (savedCart) {
-      try {
-        const cartData = JSON.parse(savedCart);
-        setCartItems(Array.isArray(cartData) ? cartData : []);
-      } catch (error) {
-        console.error('Error parsing cart data:', error);
-        setCartItems([]);
-      }
-    } else {
-      // Start with empty cart
-      setCartItems([]);
-    }
-  }, []);
-
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    
-    const updatedCart = cartItems.map(item =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-    setCartItems(updatedCart);
-    localStorage.setItem('cyberbyte-cart', JSON.stringify(updatedCart));
-  };
-
-  const removeItem = (id: number) => {
-    const updatedCart = cartItems.filter(item => item.id !== id);
-    setCartItems(updatedCart);
-    localStorage.setItem('cyberbyte-cart', JSON.stringify(updatedCart));
-  };
+  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
 
   const moveToWishlist = (item: CartItem) => {
     // Add to wishlist logic here
-    removeItem(item.id);
+    removeFromCart(item.id.toString());
   };
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -79,10 +43,6 @@ export default function CartPage() {
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
 
-  const handleCheckout = () => {
-    setIsCheckingOut(true);
-    // setCheckoutStep(1);
-  };
 
   const getBadgeColor = (discount?: number) => {
     if (!discount) return 'from-gray-500 to-gray-600';
@@ -223,7 +183,7 @@ export default function CartPage() {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center border border-accent-blue/30 rounded-lg">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.id.toString(), item.quantity - 1)}
                           className="p-2 hover:bg-accent-blue/20 transition-colors duration-300"
                         >
                           <Minus className="w-4 h-4 text-white" />
@@ -232,7 +192,7 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.id.toString(), item.quantity + 1)}
                           disabled={!item.inStock}
                           className="p-2 hover:bg-accent-blue/20 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
@@ -261,7 +221,7 @@ export default function CartPage() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeFromCart(item.id.toString())}
                       className="p-2 bg-accent-gray rounded-lg text-red-400 hover:bg-red-500/20 transition-colors duration-300"
                       title="Remove Item"
                     >
@@ -316,14 +276,15 @@ export default function CartPage() {
               </div>
 
               {/* Checkout Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleCheckout}
-                className="w-full py-4 bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-accent-blue/25 transition-all duration-300 mb-4"
-              >
-                Proceed to Checkout
-              </motion.button>
+              <Link href="/checkout">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-4 bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-accent-blue/25 transition-all duration-300 mb-4"
+                >
+                  Proceed to Checkout
+                </motion.button>
+              </Link>
 
               {/* Security Info */}
               <div className="space-y-3 text-sm text-text-secondary">
@@ -345,64 +306,6 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* Checkout Modal */}
-      {isCheckingOut && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="glass-effect rounded-2xl p-8 max-w-md w-full"
-          >
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full flex items-center justify-center">
-                <CreditCard className="w-8 h-8 text-white" />
-              </div>
-              
-              <h2 className="text-2xl font-orbitron font-bold text-white mb-4">
-                Checkout
-              </h2>
-              
-              <p className="text-text-secondary mb-6">
-                This is a demo checkout. In a real application, this would redirect to a payment processor.
-              </p>
-              
-              <div className="space-y-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-2">
-                    ${total.toFixed(2)}
-                  </div>
-                  <p className="text-text-secondary">
-                    Total for {cartItems.length} item{cartItems.length !== 1 ? 's' : ''}
-                  </p>
-                </div>
-                
-                <div className="flex space-x-4">
-                  <button
-                    onClick={() => setIsCheckingOut(false)}
-                    className="flex-1 py-3 px-4 bg-accent-gray border border-accent-blue/30 rounded-lg text-white hover:border-accent-blue transition-colors duration-300"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsCheckingOut(false);
-                      setCartItems([]);
-                      localStorage.removeItem('cyberbyte-cart');
-                    }}
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-accent-blue/25 transition-all duration-300"
-                  >
-                    Complete Order
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
     </div>
   );
 }

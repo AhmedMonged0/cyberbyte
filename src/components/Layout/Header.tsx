@@ -19,6 +19,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 
 interface HeaderProps {
   cartCount: number;
@@ -27,6 +28,7 @@ interface HeaderProps {
 
 export default function Header({ cartCount, onSearch }: HeaderProps) {
   const { user, logout } = useAuth();
+  const { getCartItemsCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
@@ -210,13 +212,13 @@ export default function Header({ cartCount, onSearch }: HeaderProps) {
                 className="p-2 rounded-lg bg-accent-gray hover:bg-accent-blue/20 transition-colors duration-300 relative"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {cartCount > 0 && (
+                {getCartItemsCount() > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     className="absolute -top-1 -right-1 bg-accent-blue text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
                   >
-                    {cartCount}
+                    {getCartItemsCount()}
                   </motion.span>
                 )}
               </motion.button>

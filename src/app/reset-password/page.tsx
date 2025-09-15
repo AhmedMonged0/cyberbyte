@@ -13,12 +13,14 @@ export default function ResetPasswordPage() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
-  const [step, setStep] = useState<'email' | 'reset'>('email')
+  const [step, setStep] = useState<'email' | 'code' | 'reset'>('email')
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [useCode, setUseCode] = useState(false)
 
   const [formData, setFormData] = useState({
     email: '',
+    code: '',
     password: '',
     confirmPassword: ''
   })
@@ -67,19 +69,56 @@ export default function ResetPasswordPage() {
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email })
+        body: JSON.stringify({ 
+          email: formData.email,
+          useCode: useCode
+        })
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        toast.success('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')
-        setStep('reset')
+        if (useCode) {
+          toast.success('تم إرسال كود إعادة التعيين إلى بريدك الإلكتروني')
+          setStep('code')
+        } else {
+          toast.success('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')
+          setStep('reset')
+        }
       } else {
         setErrors({ email: data.error || 'حدث خطأ في إرسال البريد الإلكتروني' })
       }
     } catch {
       toast.error('حدث خطأ في إرسال البريد الإلكتروني')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setErrors({})
+
+    try {
+      const response = await fetch('/api/auth/verify-reset-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: formData.code.toUpperCase() })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setUser(data.user)
+        setFormData(prev => ({ ...prev, token: data.token }))
+        setStep('reset')
+        toast.success('الكود صحيح! يمكنك الآن تغيير كلمة المرور')
+      } else {
+        setErrors({ code: data.message || 'الكود غير صحيح أو منتهي الصلاحية' })
+      }
+    } catch {
+      toast.error('حدث خطأ في التحقق من الكود')
     } finally {
       setIsLoading(false)
     }
@@ -108,8 +147,9 @@ export default function ResetPasswordPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          token, 
-          password: formData.password 
+          token: token || formData.token, 
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
         })
       })
 
@@ -141,7 +181,7 @@ export default function ResetPasswordPage() {
     return (
       <AuthForm
         title="نسيان كلمة المرور"
-        subtitle="أدخل بريدك الإلكتروني لإرسال رابط إعادة التعيين"
+        subtitle="أدخل بريدك الإلكتروني لإرسال رابط أو كود إعادة التعيين"
         icon={<Lock className="h-6 w-6 text-white" />}
       >
         <form onSubmit={handleEmailSubmit} className="space-y-6">
@@ -157,14 +197,83 @@ export default function ResetPasswordPage() {
             icon={<Mail className="h-5 w-5 text-text-secondary" />}
           />
 
+          <div className="flex items-center space-x-2 space-x-reverse">
+            <input
+              type="checkbox"
+              id="useCode"
+              checked={useCode}
+              onChange={(e) => setUseCode(e.target.checked)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label htmlFor="useCode" className="text-sm text-text-secondary">
+              إرسال كود بدلاً من رابط
+            </label>
+          </div>
+
           <SubmitButton
             isLoading={isLoading}
             loadingText="جاري الإرسال..."
           >
-            إرسال رابط إعادة التعيين
+            {useCode ? 'إرسال كود إعادة التعيين' : 'إرسال رابط إعادة التعيين'}
           </SubmitButton>
 
           <div className="text-center">
+            <button
+              type="button"
+              onClick={() => router.push('/login')}
+              className="text-sm text-text-secondary hover:text-gradient-neon transition-colors"
+            >
+              العودة إلى تسجيل الدخول
+            </button>
+          </div>
+        </form>
+      </AuthForm>
+    )
+  }
+
+  // Show code form if step is code
+  if (step === 'code') {
+    return (
+      <AuthForm
+        title="إدخال كود إعادة التعيين"
+        subtitle="أدخل الكود المكون من 6 أحرف المرسل إلى بريدك الإلكتروني"
+        icon={<Lock className="h-6 w-6 text-white" />}
+      >
+        <form onSubmit={handleCodeSubmit} className="space-y-6">
+          <FormField
+            label="كود إعادة التعيين"
+            type="text"
+            name="code"
+            value={formData.code}
+            onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
+            error={errors.code}
+            placeholder="A1B2C3"
+            required
+            maxLength={6}
+            className="text-center text-2xl font-mono tracking-widest"
+            icon={<Lock className="h-5 w-5 text-text-secondary" />}
+          />
+
+          <p className="text-sm text-text-secondary text-center">
+            الكود صالح لمدة 15 دقيقة فقط
+          </p>
+
+          <SubmitButton
+            isLoading={isLoading}
+            loadingText="جاري التحقق..."
+          >
+            تحقق من الكود
+          </SubmitButton>
+
+          <div className="text-center space-y-2">
+            <button
+              type="button"
+              onClick={() => setStep('email')}
+              className="text-sm text-text-secondary hover:text-gradient-neon transition-colors"
+            >
+              العودة إلى إدخال البريد الإلكتروني
+            </button>
+            <br />
             <button
               type="button"
               onClick={() => router.push('/login')}

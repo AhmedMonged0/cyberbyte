@@ -70,8 +70,7 @@ export default function ResetPasswordPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          email: formData.email,
-          useCode: true  // دائماً كود
+          email: formData.email
         })
       })
 
@@ -248,6 +247,15 @@ export default function ResetPasswordPage() {
           </SubmitButton>
 
           <div className="text-center space-y-2">
+            <button
+              type="button"
+              onClick={handleEmailSubmit}
+              disabled={isLoading}
+              className="text-sm text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50"
+            >
+              إعادة إرسال الكود
+            </button>
+            <br />
             <button
               type="button"
               onClick={() => setStep('email')}

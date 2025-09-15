@@ -36,7 +36,7 @@ export default function AdminDashboard() {
     }
 
     fetchUsers();
-  }, [router]);
+  }, [router, fetchUsers]);
 
   const fetchUsers = async () => {
     try {
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchUsers();
-  }, [searchTerm]);
+  }, [searchTerm, fetchUsers]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');

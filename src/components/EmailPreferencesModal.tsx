@@ -35,7 +35,7 @@ export default function EmailPreferencesModal({ isOpen, onClose }: EmailPreferen
       await new Promise(resolve => setTimeout(resolve, 1000))
       toast.success('Email preferences updated successfully!')
       onClose()
-    } catch (error) {
+    } catch {
       toast.error('Failed to update preferences')
     } finally {
       setIsLoading(false)

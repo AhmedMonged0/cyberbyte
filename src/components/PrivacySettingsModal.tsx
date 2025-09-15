@@ -41,7 +41,7 @@ export default function PrivacySettingsModal({ isOpen, onClose }: PrivacySetting
       await new Promise(resolve => setTimeout(resolve, 1000))
       toast.success('Privacy settings updated successfully!')
       onClose()
-    } catch (error) {
+    } catch {
       toast.error('Failed to update privacy settings')
     } finally {
       setIsLoading(false)

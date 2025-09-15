@@ -26,7 +26,7 @@ export default function ResetLinkPage() {
       setCopied(true)
       toast.success('تم نسخ الرابط!')
       setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
+    } catch {
       toast.error('فشل في نسخ الرابط')
     }
   }

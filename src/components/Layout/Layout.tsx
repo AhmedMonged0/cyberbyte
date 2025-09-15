@@ -53,7 +53,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen">
-      {shouldShowHeader && <Header cartCount={0} onSearch={handleSearch} />}
+      {shouldShowHeader && <Header onSearch={handleSearch} />}
       <main className={`relative z-10 ${shouldShowHeader ? 'pt-16' : ''}`}>
         {children}
       </main>

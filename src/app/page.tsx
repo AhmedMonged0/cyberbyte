@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <div className="bg-gradient-tech overflow-x-hidden">
-      <Header cartCount={0} onSearch={handleSearch} />
+      <Header onSearch={handleSearch} />
       <HeroSection />
       <ProductCategories />
       <FeaturedProducts />

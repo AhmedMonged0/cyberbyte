@@ -8,25 +8,11 @@ import {
   Truck, 
   Shield, 
   Check,
-  ArrowLeft,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Clock,
-  Star
+  ArrowLeft
 } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 
-interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
 
 export default function CheckoutPage() {
   const { cartItems, clearCart, getCartTotal } = useCart();
@@ -52,7 +38,6 @@ export default function CheckoutPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState('card');
-  const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
 
   useEffect(() => {
     // Generate order number

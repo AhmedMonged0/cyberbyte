@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   ShoppingCart, 
@@ -9,7 +9,6 @@ import {
   Trash2, 
   Heart, 
   ArrowLeft,
-  CreditCard,
   Truck,
   Shield,
   Check
@@ -18,7 +17,7 @@ import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 
 interface CartItem {
-  id: number;
+  id: string;
   name: string;
   price: number;
   originalPrice?: number;
@@ -29,11 +28,11 @@ interface CartItem {
 }
 
 export default function CartPage() {
-  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const moveToWishlist = (item: CartItem) => {
     // Add to wishlist logic here
-    removeFromCart(item.id.toString());
+    removeFromCart(item.id);
   };
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -183,7 +182,7 @@ export default function CartPage() {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center border border-accent-blue/30 rounded-lg">
                         <button
-                          onClick={() => updateQuantity(item.id.toString(), item.quantity - 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           className="p-2 hover:bg-accent-blue/20 transition-colors duration-300"
                         >
                           <Minus className="w-4 h-4 text-white" />
@@ -192,7 +191,7 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id.toString(), item.quantity + 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           disabled={!item.inStock}
                           className="p-2 hover:bg-accent-blue/20 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
@@ -221,7 +220,7 @@ export default function CartPage() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => removeFromCart(item.id.toString())}
+                      onClick={() => removeFromCart(item.id)}
                       className="p-2 bg-accent-gray rounded-lg text-red-400 hover:bg-red-500/20 transition-colors duration-300"
                       title="Remove Item"
                     >

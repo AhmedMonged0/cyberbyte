@@ -22,11 +22,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 
 interface HeaderProps {
-  cartCount: number;
   onSearch: (query: string) => void;
 }
 
-export default function Header({ cartCount, onSearch }: HeaderProps) {
+export default function Header({ onSearch }: HeaderProps) {
   const { user, logout } = useAuth();
   const { getCartItemsCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);

@@ -35,40 +35,16 @@ export default function CartPage() {
     // Load cart from localStorage
     const savedCart = localStorage.getItem('cyberbyte-cart');
     if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
+      try {
+        const cartData = JSON.parse(savedCart);
+        setCartItems(Array.isArray(cartData) ? cartData : []);
+      } catch (error) {
+        console.error('Error parsing cart data:', error);
+        setCartItems([]);
+      }
     } else {
-      // Mock cart data
-      const mockCart: CartItem[] = [
-        {
-          id: 1,
-          name: "Alienware X17 R2 Gaming Laptop",
-          price: 2499,
-          originalPrice: 2799,
-          image: "/api/placeholder/200/150",
-          quantity: 1,
-          inStock: true,
-          discount: 11
-        },
-        {
-          id: 2,
-          name: "Corsair K95 RGB Keyboard",
-          price: 199,
-          originalPrice: 249,
-          image: "/api/placeholder/200/150",
-          quantity: 2,
-          inStock: true,
-          discount: 20
-        },
-        {
-          id: 3,
-          name: "Logitech MX Master 3S",
-          price: 99,
-          image: "/api/placeholder/200/150",
-          quantity: 1,
-          inStock: true
-        }
-      ];
-      setCartItems(mockCart);
+      // Start with empty cart
+      setCartItems([]);
     }
   }, []);
 

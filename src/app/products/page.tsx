@@ -69,9 +69,9 @@ export default function ProductsPage() {
     return productImage?.main || getFallbackImage(product.category);
   };
 
-  // Fetch products from API
+  // Fetch products from API with retry logic
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = async (retryCount = 0) => {
       try {
         setIsLoading(true);
         setError(null); // Clear previous errors
@@ -85,7 +85,7 @@ export default function ProductsPage() {
           ...(sortOrder && { sortOrder })
         });
 
-        console.log('Fetching products with params:', params.toString());
+        console.log('Fetching products with params:', params.toString(), 'Retry:', retryCount);
         
         const response = await fetch(`/api/products?${params}`, {
           method: 'GET',
@@ -110,9 +110,21 @@ export default function ProductsPage() {
         setTotalPages(data.pagination?.totalPages || 1);
       } catch (err) {
         console.error('Error fetching products:', err);
+        
+        // Retry logic - retry up to 3 times with exponential backoff
+        if (retryCount < 3) {
+          console.log(`Retrying in ${Math.pow(2, retryCount) * 1000}ms...`);
+          setTimeout(() => {
+            fetchProducts(retryCount + 1);
+          }, Math.pow(2, retryCount) * 1000);
+          return;
+        }
+        
         setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
-        setIsLoading(false);
+        if (retryCount === 0) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -359,7 +371,10 @@ export default function ProductsPage() {
                   </div>
                   <h3 className="text-2xl font-semibold text-white mb-4">No products found</h3>
                   <p className="text-text-secondary mb-8">
-                    Try adjusting your filters or search terms to find what you're looking for.
+                    {searchQuery || selectedCategory !== 'all' 
+                      ? "Try adjusting your filters or search terms to find what you're looking for."
+                      : "No products are available at the moment. Please check back later."
+                    }
                   </p>
                   <button
                     onClick={() => {

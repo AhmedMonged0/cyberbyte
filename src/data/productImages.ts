@@ -100,10 +100,10 @@ export const getProductImage = (category: string, productId: string): ProductIma
 // Function to get fallback image
 export const getFallbackImage = (category: string) => {
   const fallbackImages = {
-    laptops: '/images/products/placeholders/laptop-placeholder.jpg',
-    accessories: '/images/products/placeholders/accessory-placeholder.jpg',
-    components: '/images/products/placeholders/component-placeholder.jpg'
+    laptops: '/images/products/placeholders/laptop-placeholder.svg',
+    accessories: '/images/products/placeholders/accessory-placeholder.svg',
+    components: '/images/products/placeholders/component-placeholder.svg'
   };
   
-  return fallbackImages[category as keyof typeof fallbackImages] || '/images/products/placeholders/default-placeholder.jpg';
+  return fallbackImages[category as keyof typeof fallbackImages] || '/images/products/placeholders/default-placeholder.svg';
 };

@@ -9,22 +9,8 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER || 'test@example.com',
     pass: process.env.SMTP_PASS || 'test-password',
   },
-  // إضافة تسجيل مفصل للأخطاء
-  debug: process.env.NODE_ENV === 'development',
-  logger: process.env.NODE_ENV === 'development',
 })
 
-// اختبار الاتصال بـ SMTP
-export async function testSMTPConnection() {
-  try {
-    await transporter.verify()
-    console.log('✅ SMTP connection verified successfully')
-    return true
-  } catch (error) {
-    console.error('❌ SMTP connection failed:', error)
-    return false
-  }
-}
 
 export async function sendPasswordResetEmail(email: string, resetToken: string, useCode: boolean = false) {
   // تحديد الرابط الأساسي بناءً على البيئة
@@ -139,35 +125,11 @@ export async function sendPasswordResetEmail(email: string, resetToken: string, 
   }
 
   try {
-    // اختبار الاتصال أولاً
-    console.log('🔍 Testing SMTP connection...')
-    const isConnected = await testSMTPConnection()
-    
-    if (!isConnected) {
-      console.error('❌ SMTP connection failed, cannot send email')
-      return false
-    }
-
-    console.log('📧 Sending password reset email...')
-    console.log('📧 Email details:', {
-      to: email,
-      from: mailOptions.from,
-      subject: mailOptions.subject,
-      smtpHost: process.env.SMTP_HOST,
-      smtpUser: process.env.SMTP_USER
-    })
-
     await transporter.sendMail(mailOptions)
-    console.log(`✅ Password reset email sent successfully to: ${email}`)
+    console.log(`Password reset email sent to: ${email}`)
     return true
   } catch (error) {
-    console.error('❌ Error sending email:', error)
-    console.error('❌ Error details:', {
-      message: error.message,
-      code: error.code,
-      command: error.command,
-      response: error.response
-    })
+    console.error('Error sending email:', error)
     return false
   }
 }
@@ -267,35 +229,11 @@ export async function sendPasswordResetCode(email: string, resetCode: string) {
   }
 
   try {
-    // اختبار الاتصال أولاً
-    console.log('🔍 Testing SMTP connection...')
-    const isConnected = await testSMTPConnection()
-    
-    if (!isConnected) {
-      console.error('❌ SMTP connection failed, cannot send email')
-      return false
-    }
-
-    console.log('📧 Sending password reset code...')
-    console.log('📧 Email details:', {
-      to: email,
-      from: mailOptions.from,
-      subject: mailOptions.subject,
-      smtpHost: process.env.SMTP_HOST,
-      smtpUser: process.env.SMTP_USER
-    })
-
     await transporter.sendMail(mailOptions)
-    console.log(`✅ Password reset code sent successfully to: ${email}`)
+    console.log(`Password reset code sent to: ${email}`)
     return true
   } catch (error) {
-    console.error('❌ Error sending email:', error)
-    console.error('❌ Error details:', {
-      message: error.message,
-      code: error.code,
-      command: error.command,
-      response: error.response
-    })
+    console.error('Error sending email:', error)
     return false
   }
 }

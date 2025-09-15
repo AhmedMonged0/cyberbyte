@@ -157,24 +157,29 @@ export default function CartPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8"
         >
           <div className="flex items-center space-x-4">
             <Link href="/products">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="p-2 bg-accent-gray rounded-lg text-white hover:bg-accent-blue/20 transition-colors duration-300"
+                className="p-3 bg-accent-gray rounded-lg text-white hover:bg-accent-blue/20 transition-colors duration-300"
               >
                 <ArrowLeft className="w-5 h-5" />
               </motion.button>
             </Link>
-            <h1 className="text-3xl font-orbitron font-bold text-white">
+            <h1 className="text-4xl font-orbitron font-bold text-white">
               Shopping Cart
             </h1>
           </div>
-          <div className="text-text-secondary">
-            {cartItems.length} item{cartItems.length !== 1 ? 's' : ''}
+          <div className="text-center lg:text-right">
+            <p className="text-text-secondary text-lg">
+              {cartItems.length} item{cartItems.length !== 1 ? 's' : ''}
+            </p>
+            <p className="text-2xl font-bold text-accent-blue">
+              ${total.toFixed(2)}
+            </p>
           </div>
         </motion.div>
 
@@ -189,12 +194,12 @@ export default function CartPage() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="glass-effect rounded-2xl p-6"
               >
-                <div className="flex items-center space-x-6">
+                <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
                   {/* Product Image */}
-                  <div className="relative w-24 h-24 bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-lg overflow-hidden border border-accent-blue/30">
+                  <div className="relative w-32 h-32 lg:w-24 lg:h-24 bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-xl overflow-hidden border border-accent-blue/30">
                     <div className="w-full h-full bg-gradient-to-br from-accent-gray to-primary-black-secondary flex items-center justify-center">
                       <div className="text-center">
-                        <div className="w-8 h-8 mx-auto mb-1 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 lg:w-8 lg:h-8 mx-auto mb-1 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full flex items-center justify-center">
                           <span className="text-sm font-orbitron font-bold">B</span>
                         </div>
                         <p className="text-xs text-text-secondary">Image</p>

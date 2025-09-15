@@ -186,7 +186,7 @@ export default function ProductsPage() {
       </section>
 
       {/* Category Tabs */}
-      <section className="py-8 bg-gradient-to-r from-primary-black to-primary-black-secondary">
+      <section className="py-12 bg-gradient-to-r from-primary-black to-primary-black-secondary border-b border-accent-blue/20">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
@@ -196,14 +196,14 @@ export default function ProductsPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
+                    className={`px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center gap-3 ${
                       selectedCategory === category.id
                         ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white shadow-lg shadow-accent-blue/30'
                         : 'bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30'
                     }`}
                   >
-                    <span>{category.name}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
+                    <span className="text-lg">{category.name}</span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-bold ${
                       selectedCategory === category.id
                         ? 'bg-white/20 text-white'
                         : 'bg-accent-blue/20 text-accent-blue'
@@ -216,10 +216,10 @@ export default function ProductsPage() {
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30 cursor-pointer"
+                      className="px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center gap-3 bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30 cursor-pointer"
                     >
-                      <span>{category.name}</span>
-                      <span className="px-2 py-1 rounded-full text-xs bg-accent-blue/20 text-accent-blue">
+                      <span className="text-lg">{category.name}</span>
+                      <span className="px-3 py-1 rounded-full text-sm font-bold bg-accent-blue/20 text-accent-blue">
                         {category.count}
                       </span>
                     </motion.div>
@@ -232,15 +232,77 @@ export default function ProductsPage() {
       </section>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Category Header */}
+        {/* Category Header & Search */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-2">
-            {categories.find(c => c.id === selectedCategory)?.name || 'All Products'}
-          </h2>
-          <p className="text-text-secondary">
-            Showing {products.length} products
-            {selectedCategory !== 'all' && ` in ${categories.find(c => c.id === selectedCategory)?.name}`}
-          </p>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2">
+                {categories.find(c => c.id === selectedCategory)?.name || 'All Products'}
+              </h2>
+              <p className="text-text-secondary text-lg">
+                Showing {products.length} products
+                {selectedCategory !== 'all' && ` in ${categories.find(c => c.id === selectedCategory)?.name}`}
+              </p>
+            </div>
+            
+            {/* Search Bar */}
+            <div className="w-full lg:w-96">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-accent-gray border border-accent-blue/30 rounded-lg text-white placeholder-text-secondary focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Controls Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+          {/* Filters Toggle & View Mode */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 bg-accent-gray border border-accent-blue/30 rounded-lg text-white hover:bg-accent-blue/20 transition-colors"
+            >
+              <Filter className="w-4 h-4" />
+              <span>Filters</span>
+            </button>
+            
+            <div className="flex border border-accent-blue/30 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-3 ${viewMode === 'grid' ? 'bg-accent-blue text-white' : 'bg-accent-gray text-text-secondary hover:text-white'}`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-3 ${viewMode === 'list' ? 'bg-accent-blue text-white' : 'bg-accent-gray text-text-secondary hover:text-white'}`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Sort */}
+          <div className="flex items-center gap-4">
+            <label className="text-white font-medium">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-4 py-2 bg-accent-gray border border-accent-blue/30 rounded-lg text-white focus:outline-none focus:border-accent-blue"
+            >
+              <option value="featured">Featured</option>
+              <option value="price">Price</option>
+              <option value="rating">Rating</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -262,20 +324,6 @@ export default function ProductsPage() {
                 </button>
               </div>
 
-              {/* Search */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">Search</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-accent-gray border border-accent-blue/30 rounded-lg text-white placeholder-text-secondary focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20"
-                  />
-                </div>
-              </div>
 
               {/* Category Filter */}
               <div className="mb-6">

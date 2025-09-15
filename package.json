@@ -9,10 +9,12 @@
     "lint": "eslint",
     "db:generate": "npx prisma generate",
     "db:push": "npx prisma db push",
+    "db:push:prod": "npx prisma db push --schema=./prisma/schema.production.prisma",
     "db:seed": "node scripts/seed-products.js",
     "postinstall": "npx prisma generate",
     "create-admin": "node scripts/create-admin.js",
-    "setup:vercel": "node scripts/setup-vercel.js"
+    "setup:vercel": "node scripts/setup-vercel.js",
+    "deploy:vercel": "node scripts/deploy-vercel.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",

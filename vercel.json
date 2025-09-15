@@ -1,4 +1,9 @@
 {
-  "buildCommand": "npx prisma generate && next build",
-  "installCommand": "npm install && npx prisma generate"
+  "buildCommand": "npx prisma generate --schema=./prisma/schema.production.prisma && next build",
+  "installCommand": "npm install && npx prisma generate --schema=./prisma/schema.production.prisma",
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
 }

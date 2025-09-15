@@ -1,13 +1,13 @@
 # تعليمات النشر على Vercel
 
 ## المشكلة
-التسجيل يعمل محلياً لكن يفشل على Vercel بسبب قاعدة البيانات المحلية.
+الموقع يعمل محلياً لكن يعطي "Internal server error" على Vercel بسبب قاعدة البيانات المحلية SQLite.
 
 ## الحل
 
 ### 1. إعداد قاعدة بيانات PostgreSQL
 
-#### خيار 1: Vercel Postgres (مجاني)
+#### خيار 1: Vercel Postgres (مجاني - الأسهل)
 1. اذهب إلى Vercel Dashboard
 2. اختر مشروعك
 3. اذهب إلى Storage → Create Database → Postgres
@@ -34,26 +34,39 @@
 
 ```
 DATABASE_URL=postgresql://username:password@host:port/database?schema=public
-JWT_SECRET=your-super-secret-jwt-key
+NEXTAUTH_SECRET=your-super-secret-jwt-key
 NEXTAUTH_URL=https://your-domain.vercel.app
-NEXTAUTH_SECRET=your-nextauth-secret-key
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+SMTP_FROM=CyberByte <noreply@cyberbyte.com>
+ADMIN_EMAIL=admin@cyberbyte.com
+ADMIN_PASSWORD=admin123
 ```
 
 ### 3. تحديث قاعدة البيانات
 
 ```bash
-# إنشاء قاعدة البيانات
-npx prisma db push
+# استخدام schema الإنتاج
+npx prisma db push --schema=./prisma/schema.production.prisma
 
-# أو استخدام migrations
-npx prisma migrate dev --name init
+# أو إنشاء migration
+npx prisma migrate dev --name init --schema=./prisma/schema.production.prisma
 ```
 
-### 4. إعادة النشر
+### 4. زرع البيانات
+
+```bash
+# زرع المنتجات
+npm run db:seed
+```
+
+### 5. إعادة النشر
 
 ```bash
 git add .
-git commit -m "Update database to PostgreSQL"
+git commit -m "Fix Vercel deployment with PostgreSQL"
 git push
 ```
 
@@ -62,3 +75,13 @@ git push
 - تأكد من أن `DATABASE_URL` صحيح
 - تأكد من أن قاعدة البيانات متاحة من الإنترنت
 - تأكد من أن جميع متغيرات البيئة محددة في Vercel
+- استخدم `schema.production.prisma` للإنتاج
+- استخدم `schema.prisma` للتطوير المحلي
+
+## استكشاف الأخطاء
+
+إذا استمر الخطأ:
+1. تحقق من logs في Vercel Dashboard
+2. تأكد من أن `DATABASE_URL` صحيح
+3. تأكد من أن قاعدة البيانات متاحة
+4. تحقق من أن جميع المتغيرات محددة

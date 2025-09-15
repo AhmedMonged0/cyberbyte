@@ -1,7 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   Laptop, 
@@ -13,14 +12,6 @@ import {
 } from 'lucide-react';
 
 export default function ProductCategories() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   const categories = [
     {
@@ -88,7 +79,7 @@ export default function ProductCategories() {
   const featuredCategories = categories.filter(cat => cat.featured);
 
   return (
-    <section ref={containerRef} className="py-20 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 tech-grid opacity-30" />
       
@@ -139,7 +130,10 @@ export default function ProductCategories() {
 
         {/* Featured Categories */}
         <motion.div
-          style={{ y, opacity }}
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
         >
           {featuredCategories.map((category, index) => (
@@ -151,7 +145,7 @@ export default function ProductCategories() {
               viewport={{ once: true }}
               className="group"
             >
-              <Link href={`/products?category=${category.id}`}>
+              <Link href={`/products/${category.id}`}>
                 <div className="relative h-80 bg-gradient-to-br from-accent-gray to-primary-black-secondary rounded-2xl overflow-hidden border border-accent-blue/30 hover-lift">
                   {/* Background Gradient */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`} />
@@ -211,7 +205,7 @@ export default function ProductCategories() {
               whileHover={{ scale: 1.05 }}
               className="group"
             >
-              <Link href={`/products?category=${category.id}`}>
+              <Link href={`/products/${category.id}`}>
                 <div className="bg-accent-gray/50 border border-accent-blue/20 rounded-xl p-6 text-center hover:border-accent-blue/50 hover:bg-accent-gray transition-all duration-300">
                   <div className={`w-12 h-12 mx-auto mb-4 bg-gradient-to-r ${category.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                     <category.icon className="w-6 h-6 text-white" />

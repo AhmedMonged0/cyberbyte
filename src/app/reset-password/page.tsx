@@ -301,7 +301,7 @@ export default function ResetPasswordPage() {
   return (
     <AuthForm
       title="إعادة تعيين كلمة المرور"
-      subtitle={`مرحباً ${user?.firstName}، أدخل كلمة المرور الجديدة`}
+      subtitle={`مرحباً ${user?.firstName || 'عزيزي المستخدم'}، أدخل كلمة المرور الجديدة`}
       icon={<Lock className="h-6 w-6 text-white" />}
     >
       <form onSubmit={handlePasswordSubmit} className="space-y-6">

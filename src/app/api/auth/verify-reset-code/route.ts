@@ -56,7 +56,9 @@ export async function POST(request: NextRequest) {
       token: accessToken,
       user: {
         id: resetToken.user.id,
-        email: resetToken.user.email
+        email: resetToken.user.email,
+        firstName: resetToken.user.firstName,
+        lastName: resetToken.user.lastName
       }
     })
 

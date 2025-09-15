@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
@@ -27,18 +27,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    // Check if admin is logged in
-    const adminToken = localStorage.getItem('admin_token');
-    if (!adminToken) {
-      router.push('/admin/login');
-      return;
-    }
-
-    fetchUsers();
-  }, [router, fetchUsers]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/admin/users?search=${searchTerm}`);
@@ -51,7 +40,18 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchTerm]);
+
+  useEffect(() => {
+    // Check if admin is logged in
+    const adminToken = localStorage.getItem('admin_token');
+    if (!adminToken) {
+      router.push('/admin/login');
+      return;
+    }
+
+    fetchUsers();
+  }, [router, fetchUsers]);
 
   useEffect(() => {
     fetchUsers();

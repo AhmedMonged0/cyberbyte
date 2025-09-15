@@ -134,7 +134,12 @@ export default function ProductsPage() {
   // Remove the old filter logic since we're now filtering on the server side
   // The API handles all filtering and sorting
 
-  const categories = ['all', 'laptops', 'accessories', 'components'];
+  const categories = [
+    { id: 'all', name: 'All Products', count: products.length },
+    { id: 'laptops', name: 'Laptops', count: products.filter(p => p.category === 'laptops').length },
+    { id: 'accessories', name: 'Accessories', count: products.filter(p => p.category === 'accessories').length },
+    { id: 'components', name: 'Components', count: products.filter(p => p.category === 'components').length }
+  ];
   const brands = ['all', 'Alienware', 'ASUS', 'Apple', 'Razer', 'Corsair', 'Logitech', 'Intel', 'NVIDIA'];
 
   const getBadgeColor = (badge: string) => {
@@ -180,7 +185,48 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      {/* Category Tabs */}
+      <section className="py-8 bg-gradient-to-r from-primary-black to-primary-black-secondary">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-4">
+            {categories.map((category) => (
+              <motion.button
+                key={category.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  selectedCategory === category.id
+                    ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white shadow-lg shadow-accent-blue/30'
+                    : 'bg-accent-gray/30 text-text-secondary hover:bg-accent-gray/50 hover:text-white border border-accent-blue/30'
+                }`}
+              >
+                <span>{category.name}</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  selectedCategory === category.id
+                    ? 'bg-white/20 text-white'
+                    : 'bg-accent-blue/20 text-accent-blue'
+                }`}>
+                  {category.count}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <div className="container mx-auto px-4 py-8">
+        {/* Category Header */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {categories.find(c => c.id === selectedCategory)?.name || 'All Products'}
+          </h2>
+          <p className="text-text-secondary">
+            Showing {products.length} products
+            {selectedCategory !== 'all' && ` in ${categories.find(c => c.id === selectedCategory)?.name}`}
+          </p>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <motion.div
@@ -224,8 +270,8 @@ export default function ProductsPage() {
                   className="w-full px-4 py-2 bg-accent-gray border border-accent-blue/30 rounded-lg text-white focus:outline-none focus:border-accent-blue"
                 >
                   {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    <option key={category.id} value={category.id}>
+                      {category.name} ({category.count})
                     </option>
                   ))}
                 </select>

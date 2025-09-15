@@ -18,9 +18,15 @@ export async function POST(request: NextRequest) {
     const BLOCK_DURATION = 30 * 60 * 1000 // 30 دقيقة
     const RESET_ATTEMPTS_DURATION = 60 * 60 * 1000 // ساعة واحدة لإعادة تعيين العداد
 
-    const resetAttempt = await prisma.resetAttempt.findUnique({
-      where: { email }
-    })
+    let resetAttempt = null
+    try {
+      resetAttempt = await prisma.resetAttempt.findUnique({
+        where: { email }
+      })
+    } catch (error) {
+      console.log('ResetAttempt table not available, skipping rate limiting:', error instanceof Error ? error.message : 'Unknown error')
+      // Continue without rate limiting if table doesn't exist
+    }
 
     // Check if email is blocked
     if (resetAttempt?.blockedUntil && new Date() < resetAttempt.blockedUntil) {
@@ -37,28 +43,36 @@ export async function POST(request: NextRequest) {
       if (timeSinceLastAttempt < RESET_ATTEMPTS_DURATION) {
         // Block the email for 30 minutes
         const blockedUntil = new Date(Date.now() + BLOCK_DURATION)
-        await prisma.resetAttempt.update({
-          where: { email },
-          data: {
-            attempts: 0,
-            blockedUntil,
-            lastAttempt: new Date()
-          }
-        })
+        try {
+          await prisma.resetAttempt.update({
+            where: { email },
+            data: {
+              attempts: 0,
+              blockedUntil,
+              lastAttempt: new Date()
+            }
+          })
+        } catch (error) {
+          console.log('Failed to update reset attempts for blocking:', error instanceof Error ? error.message : 'Unknown error')
+        }
 
         return NextResponse.json({
           error: `تم تجاوز الحد الأقصى للمحاولات (${MAX_ATTEMPTS}). تم حظر البريد الإلكتروني لمدة 30 دقيقة.`
         }, { status: 429 })
       } else {
         // Reset attempts after 1 hour
-        await prisma.resetAttempt.update({
-          where: { email },
-          data: {
-            attempts: 0,
-            blockedUntil: null,
-            lastAttempt: new Date()
-          }
-        })
+        try {
+          await prisma.resetAttempt.update({
+            where: { email },
+            data: {
+              attempts: 0,
+              blockedUntil: null,
+              lastAttempt: new Date()
+            }
+          })
+        } catch (error) {
+          console.log('Failed to reset attempts:', error instanceof Error ? error.message : 'Unknown error')
+        }
       }
     }
 
@@ -103,23 +117,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Update or create reset attempt record
-    if (resetAttempt) {
-      await prisma.resetAttempt.update({
-        where: { email },
-        data: {
-          attempts: resetAttempt.attempts + 1,
-          lastAttempt: new Date(),
-          blockedUntil: null // Reset block if exists
-        }
-      })
-    } else {
-      await prisma.resetAttempt.create({
-        data: {
-          email,
-          attempts: 1,
-          lastAttempt: new Date()
-        }
-      })
+    try {
+      if (resetAttempt) {
+        await prisma.resetAttempt.update({
+          where: { email },
+          data: {
+            attempts: resetAttempt.attempts + 1,
+            lastAttempt: new Date(),
+            blockedUntil: null // Reset block if exists
+          }
+        })
+      } else {
+        await prisma.resetAttempt.create({
+          data: {
+            email,
+            attempts: 1,
+            lastAttempt: new Date()
+          }
+        })
+      }
+    } catch (error) {
+      console.log('Failed to update reset attempts, continuing without rate limiting:', error instanceof Error ? error.message : 'Unknown error')
+      // Continue without updating attempts if table doesn't exist
     }
 
     return NextResponse.json({

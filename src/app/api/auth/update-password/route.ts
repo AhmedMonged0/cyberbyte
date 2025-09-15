@@ -15,7 +15,7 @@ const updatePasswordSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { token, password, confirmPassword } = updatePasswordSchema.parse(body)
+    const { token, password } = updatePasswordSchema.parse(body)
 
     // البحث عن الـ token في قاعدة البيانات
     const resetToken = await prisma.resetToken.findFirst({

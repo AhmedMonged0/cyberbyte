@@ -16,13 +16,13 @@ export default function ResetPasswordPage() {
   const [step, setStep] = useState<'email' | 'code' | 'reset'>('email')
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<any>(null)
-  const [useCode, setUseCode] = useState(false)
 
   const [formData, setFormData] = useState({
     email: '',
     code: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    token: ''
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -71,20 +71,15 @@ export default function ResetPasswordPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           email: formData.email,
-          useCode: useCode
+          useCode: true  // دائماً كود
         })
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        if (useCode) {
-          toast.success('تم إرسال كود إعادة التعيين إلى بريدك الإلكتروني')
-          setStep('code')
-        } else {
-          toast.success('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')
-          setStep('reset')
-        }
+        toast.success('تم إرسال كود إعادة التعيين إلى بريدك الإلكتروني')
+        setStep('code')
       } else {
         setErrors({ email: data.error || 'حدث خطأ في إرسال البريد الإلكتروني' })
       }
@@ -181,7 +176,7 @@ export default function ResetPasswordPage() {
     return (
       <AuthForm
         title="نسيان كلمة المرور"
-        subtitle="أدخل بريدك الإلكتروني لإرسال رابط أو كود إعادة التعيين"
+        subtitle="أدخل بريدك الإلكتروني لإرسال كود إعادة التعيين"
         icon={<Lock className="h-6 w-6 text-white" />}
       >
         <form onSubmit={handleEmailSubmit} className="space-y-6">
@@ -197,24 +192,11 @@ export default function ResetPasswordPage() {
             icon={<Mail className="h-5 w-5 text-text-secondary" />}
           />
 
-          <div className="flex items-center space-x-2 space-x-reverse">
-            <input
-              type="checkbox"
-              id="useCode"
-              checked={useCode}
-              onChange={(e) => setUseCode(e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="useCode" className="text-sm text-text-secondary">
-              إرسال كود بدلاً من رابط
-            </label>
-          </div>
-
           <SubmitButton
             isLoading={isLoading}
             loadingText="جاري الإرسال..."
           >
-            {useCode ? 'إرسال كود إعادة التعيين' : 'إرسال رابط إعادة التعيين'}
+            إرسال كود إعادة التعيين
           </SubmitButton>
 
           <div className="text-center">

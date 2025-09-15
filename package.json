@@ -11,9 +11,12 @@
     "db:push": "npx prisma db push",
     "db:push:prod": "npx prisma db push --schema=./prisma/schema.production.prisma",
     "db:seed": "node scripts/seed-products.js",
+    "db:seed:prod": "node scripts/seed-production.js",
+    "db:seed:extended": "node scripts/seed-extended-products.js",
     "postinstall": "npx prisma generate",
     "create-admin": "node scripts/create-admin.js",
     "setup:vercel": "node scripts/setup-vercel.js",
+    "setup:vercel:postgres": "node scripts/setup-vercel-postgres.js",
     "deploy:vercel": "node scripts/deploy-vercel.js"
   },
   "dependencies": {

@@ -74,28 +74,43 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
+        setError(null); // Clear previous errors
+        
         const params = new URLSearchParams({
           page: currentPage.toString(),
           limit: '12',
           ...(searchQuery && { search: searchQuery }),
-          ...(selectedCategory && { category: selectedCategory }),
+          ...(selectedCategory && selectedCategory !== 'all' && { category: selectedCategory }),
           ...(sortBy && { sortBy }),
           ...(sortOrder && { sortOrder })
         });
 
-        const response = await fetch(`/api/products?${params}`);
-        const data = await response.json();
+        console.log('Fetching products with params:', params.toString());
         
-        if (response.ok) {
-          setProducts(data.products);
-          setFilteredProducts(data.products);
-          setTotalPages(data.pagination.totalPages);
-        } else {
-          setError(data.error || 'Failed to fetch products');
+        const response = await fetch(`/api/products?${params}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('API Error:', errorData);
+          throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
         }
+        
+        const data = await response.json();
+        console.log('Products data:', data);
+        
+        setProducts(data.products || []);
+        setFilteredProducts(data.products || []);
+        setTotalPages(data.pagination?.totalPages || 1);
       } catch (err) {
-        setError('Failed to fetch products');
         console.error('Error fetching products:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
         setIsLoading(false);
       }

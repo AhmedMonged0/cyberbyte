@@ -40,6 +40,19 @@ model ResetToken {
   @@map("reset_tokens")
 }
 
+model ResetAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  attempts  Int      @default(1)
+  lastAttempt DateTime @default(now())
+  blockedUntil DateTime? // إذا تم حظر البريد
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email])
+  @@map("reset_attempts")
+}
+
 model Admin {
   id        String   @id @default(cuid())
   email     String   @unique

@@ -16,6 +16,7 @@ export default function ResetPasswordPage() {
   const [step, setStep] = useState<'email' | 'code' | 'reset'>('email')
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null)
 
   const [formData, setFormData] = useState({
     email: '',
@@ -79,7 +80,15 @@ export default function ResetPasswordPage() {
       if (response.ok) {
         toast.success('تم إرسال كود إعادة التعيين إلى بريدك الإلكتروني')
         setStep('code')
+        // Calculate remaining attempts (assuming max 3)
+        const attempts = data.attempts || 1
+        setRemainingAttempts(3 - attempts)
       } else {
+        if (response.status === 429) {
+          toast.error(data.error || 'تم تجاوز الحد الأقصى للمحاولات')
+        } else {
+          toast.error(data.error || 'حدث خطأ في إرسال البريد الإلكتروني')
+        }
         setErrors({ email: data.error || 'حدث خطأ في إرسال البريد الإلكتروني' })
       }
     } catch {
@@ -238,6 +247,14 @@ export default function ResetPasswordPage() {
           <p className="text-sm text-text-secondary text-center">
             الكود صالح لمدة 15 دقيقة فقط
           </p>
+          
+          {remainingAttempts !== null && remainingAttempts < 3 && (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded text-center">
+              <p className="text-sm">
+                ⚠️ المحاولات المتبقية: {remainingAttempts} من 3
+              </p>
+            </div>
+          )}
 
           <SubmitButton
             isLoading={isLoading}

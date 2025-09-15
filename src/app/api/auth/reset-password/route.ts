@@ -13,6 +13,55 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email } = resetPasswordSchema.parse(body)
 
+    // Check reset attempts limit
+    const MAX_ATTEMPTS = 3 // الحد الأقصى 3 محاولات
+    const BLOCK_DURATION = 30 * 60 * 1000 // 30 دقيقة
+    const RESET_ATTEMPTS_DURATION = 60 * 60 * 1000 // ساعة واحدة لإعادة تعيين العداد
+
+    const resetAttempt = await prisma.resetAttempt.findUnique({
+      where: { email }
+    })
+
+    // Check if email is blocked
+    if (resetAttempt?.blockedUntil && new Date() < resetAttempt.blockedUntil) {
+      const remainingTime = Math.ceil((resetAttempt.blockedUntil.getTime() - Date.now()) / (1000 * 60))
+      return NextResponse.json({
+        error: `تم حظر هذا البريد الإلكتروني مؤقتاً. حاول مرة أخرى بعد ${remainingTime} دقيقة.`
+      }, { status: 429 })
+    }
+
+    // Check if attempts exceeded
+    if (resetAttempt && resetAttempt.attempts >= MAX_ATTEMPTS) {
+      // Check if enough time has passed to reset attempts
+      const timeSinceLastAttempt = Date.now() - resetAttempt.lastAttempt.getTime()
+      if (timeSinceLastAttempt < RESET_ATTEMPTS_DURATION) {
+        // Block the email for 30 minutes
+        const blockedUntil = new Date(Date.now() + BLOCK_DURATION)
+        await prisma.resetAttempt.update({
+          where: { email },
+          data: {
+            attempts: 0,
+            blockedUntil,
+            lastAttempt: new Date()
+          }
+        })
+
+        return NextResponse.json({
+          error: `تم تجاوز الحد الأقصى للمحاولات (${MAX_ATTEMPTS}). تم حظر البريد الإلكتروني لمدة 30 دقيقة.`
+        }, { status: 429 })
+      } else {
+        // Reset attempts after 1 hour
+        await prisma.resetAttempt.update({
+          where: { email },
+          data: {
+            attempts: 0,
+            blockedUntil: null,
+            lastAttempt: new Date()
+          }
+        })
+      }
+    }
+
     // Check if user exists
     const user = await prisma.user.findUnique({
       where: { email }
@@ -21,7 +70,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       // Don't reveal if user exists or not for security
       return NextResponse.json({
-        message: 'If an account with that email exists, we sent a password reset link.'
+        message: 'If an account with that email exists, we sent a password reset code.'
       })
     }
 
@@ -53,8 +102,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Update or create reset attempt record
+    if (resetAttempt) {
+      await prisma.resetAttempt.update({
+        where: { email },
+        data: {
+          attempts: resetAttempt.attempts + 1,
+          lastAttempt: new Date(),
+          blockedUntil: null // Reset block if exists
+        }
+      })
+    } else {
+      await prisma.resetAttempt.create({
+        data: {
+          email,
+          attempts: 1,
+          lastAttempt: new Date()
+        }
+      })
+    }
+
     return NextResponse.json({
-      message: 'If an account with that email exists, we sent a password reset code.'
+      message: 'If an account with that email exists, we sent a password reset code.',
+      attempts: resetAttempt ? resetAttempt.attempts + 1 : 1
     })
 
   } catch (error) {

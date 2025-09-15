@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Star, 
@@ -34,7 +34,6 @@ export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Function to get product image
   const getProductImageSrc = (product: Product) => {
@@ -144,7 +143,7 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <section ref={containerRef} className="py-20 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 tech-grid opacity-20" />
       

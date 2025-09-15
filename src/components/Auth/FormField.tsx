@@ -15,6 +15,8 @@ interface FormFieldProps {
   showPasswordToggle?: boolean;
   autoComplete?: string;
   required?: boolean;
+  maxLength?: number;
+  className?: string;
 }
 
 export default function FormField({
@@ -29,6 +31,8 @@ export default function FormField({
   showPasswordToggle = false,
   autoComplete,
   required = false,
+  maxLength,
+  className,
 }: FormFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -56,9 +60,10 @@ export default function FormField({
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          maxLength={maxLength}
           className={`block w-full pl-10 pr-10 py-3 bg-accent-gray border rounded-lg text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue/20 focus:border-accent-blue transition-all duration-300 ${
             error ? 'border-red-500' : isFocused ? 'border-accent-blue' : 'border-accent-blue/30'
-          }`}
+          } ${className || ''}`}
           placeholder={placeholder}
         />
         {showPasswordToggle && (

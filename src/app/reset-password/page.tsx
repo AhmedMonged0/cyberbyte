@@ -18,6 +18,7 @@ export default function ResetPasswordPage() {
   const [user, setUser] = useState<any>(null)
   const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null)
 
+
   const [formData, setFormData] = useState({
     email: '',
     code: '',
@@ -58,6 +59,9 @@ export default function ResetPasswordPage() {
     // Only verify token if it exists in URL
     if (token && token.length > 0) {
       verifyToken()
+    } else {
+      // If no token, start with email step
+      setStep('email')
     }
   }, [token, verifyToken])
 
@@ -179,8 +183,8 @@ export default function ResetPasswordPage() {
     }
   }
 
-  // Show email form if no token or step is email
-  if (!token || step === 'email') {
+  // Show email form if step is email
+  if (step === 'email') {
     return (
       <AuthForm
         title="نسيان كلمة المرور"

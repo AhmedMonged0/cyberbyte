@@ -44,12 +44,44 @@ export async function GET(
       )
     }
 
-    // Parse JSON fields
+    // Parse JSON fields safely
+    let images = [product.image];
+    let features = [];
+    let specifications = {};
+
+    try {
+      if (product.images && typeof product.images === 'string') {
+        images = JSON.parse(product.images);
+      } else if (Array.isArray(product.images)) {
+        images = product.images;
+      }
+    } catch (e) {
+      console.warn('Failed to parse images JSON:', e);
+    }
+
+    try {
+      if (product.features && typeof product.features === 'string') {
+        features = JSON.parse(product.features);
+      } else if (Array.isArray(product.features)) {
+        features = product.features;
+      }
+    } catch (e) {
+      console.warn('Failed to parse features JSON:', e);
+    }
+
+    try {
+      if (product.specifications && typeof product.specifications === 'object') {
+        specifications = product.specifications;
+      }
+    } catch (e) {
+      console.warn('Failed to parse specifications:', e);
+    }
+
     const processedProduct = {
       ...product,
-      images: product.images ? JSON.parse(product.images) : [product.image],
-      features: product.features ? JSON.parse(product.features) : [],
-      specifications: product.specifications || {}
+      images,
+      features,
+      specifications
     }
 
     return NextResponse.json(processedProduct)

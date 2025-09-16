@@ -32,7 +32,9 @@ export async function POST(request: NextRequest) {
 
     // Verify reset code using appropriate system
     // For now, use production system for both dev and prod
+    console.log('🔍 Verifying code:', { code, codeLength: code.length, codeType: typeof code })
     const verification = verifyResetCodeForProduction(email, code)
+    console.log('🔍 Verification result:', verification)
       
     if (!verification.valid) {
       console.log('❌ Reset code verification failed:', verification.message)

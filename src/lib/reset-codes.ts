@@ -72,22 +72,28 @@ export function verifyResetCodeForProduction(email: string, code: string): { val
   
   // Check if code exists and is not empty
   if (!code || code.trim().length === 0) {
+    console.log('❌ Code is empty')
     return { valid: false, message: 'الكود مطلوب' }
   }
   
+  // Trim whitespace
+  const trimmedCode = code.trim()
+  
   // Check if code is 6 characters
-  if (code.length !== 6) {
+  if (trimmedCode.length !== 6) {
+    console.log('❌ Code length is not 6:', trimmedCode.length)
     return { valid: false, message: 'الكود يجب أن يكون 6 أحرف بالضبط' }
   }
   
   // Check if code contains only valid characters (letters and numbers)
-  if (!/^[A-Za-z0-9]{6}$/.test(code)) {
+  if (!/^[A-Za-z0-9]{6}$/.test(trimmedCode)) {
+    console.log('❌ Code contains invalid characters:', trimmedCode)
     return { valid: false, message: 'الكود يجب أن يحتوي على أحرف وأرقام فقط' }
   }
   
   // For demo purposes, accept any 6-character alphanumeric code
   // In production, this should validate against stored codes
-  console.log('✅ Production reset code accepted:', { email, code })
+  console.log('✅ Production reset code accepted:', { email, code: trimmedCode })
   
   return { valid: true, message: 'الكود صحيح' }
 }

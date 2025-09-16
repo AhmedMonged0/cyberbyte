@@ -45,7 +45,7 @@ export default function ProductsPage() {
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [sortBy, setSortBy] = useState('featured');
-  const [sortOrder] = useState('desc');
+  // const [sortOrder] = useState('desc'); // Not used in current implementation
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);

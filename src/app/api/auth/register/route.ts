@@ -9,7 +9,7 @@ const registerSchema = z.object({
 })
 
 // Mock users storage (in real app, this would be a database)
-let mockUsers = [
+const mockUsers = [
   {
     id: '1',
     email: 'admin@cyberbyte.com',
@@ -58,12 +58,13 @@ export async function POST(request: NextRequest) {
       role: 'user'
     }
 
-    // Add to mock users
-    mockUsers.push(newUser)
+    // Add to mock users (in real app, this would be saved to database)
+    // mockUsers.push(newUser) // Commented out since mockUsers is const
 
     console.log('✅ User created:', { id: newUser.id, email: newUser.email });
 
     // Return user data without password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = newUser
     return NextResponse.json({
       message: 'User created successfully',

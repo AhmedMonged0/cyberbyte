@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('📊 Admin stats request')
 
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       totalProducts: 16,
       totalOrders: 24,
       totalRevenue: 45680,
-      recentOrders: 5,
+      recentOrdersCount: 5,
       lowStockProducts: 3,
       monthlyGrowth: {
         users: 12.5,

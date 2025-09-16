@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
 import { sendPasswordResetCode } from '@/lib/email'
+import { storeResetCode } from '@/lib/reset-codes'
 import { z } from 'zod'
 import crypto from 'crypto'
 
 const resetPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
 })
-
-// Simple in-memory storage for reset codes
-const resetCodes = new Map<string, { code: string; expiresAt: Date; userId: string }>()
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,14 +29,9 @@ export async function POST(request: NextRequest) {
 
     // Generate secure reset code
     const resetCode = crypto.randomBytes(3).toString('hex').toUpperCase()
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
 
-    // Store reset code
-    resetCodes.set(email, {
-      code: resetCode,
-      expiresAt,
-      userId: user.id
-    })
+    // Store reset code using shared system
+    storeResetCode(email, resetCode, user.id, 15) // 15 minutes
 
     console.log('✅ Reset code generated for:', email, 'Code:', resetCode)
 

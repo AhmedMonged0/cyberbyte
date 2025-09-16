@@ -42,11 +42,29 @@ export function getAllUsers(): User[] {
   return realUsers
 }
 
+// Get only regular users (exclude admin)
+export function getRegularUsers(): User[] {
+  return realUsers.filter(user => user.role === 'user')
+}
+
 export function searchUsers(search: string): User[] {
   if (!search) return realUsers
   
   const searchLower = search.toLowerCase()
   return realUsers.filter(user => 
+    user.firstName.toLowerCase().includes(searchLower) ||
+    user.lastName.toLowerCase().includes(searchLower) ||
+    user.email.toLowerCase().includes(searchLower)
+  )
+}
+
+// Search only regular users (exclude admin)
+export function searchRegularUsers(search: string): User[] {
+  const regularUsers = getRegularUsers()
+  if (!search) return regularUsers
+  
+  const searchLower = search.toLowerCase()
+  return regularUsers.filter(user => 
     user.firstName.toLowerCase().includes(searchLower) ||
     user.lastName.toLowerCase().includes(searchLower) ||
     user.email.toLowerCase().includes(searchLower)

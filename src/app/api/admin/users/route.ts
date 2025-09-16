@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllUsers, searchUsers } from '@/lib/users'
+import { getRegularUsers, searchRegularUsers } from '@/lib/users'
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,8 +8,8 @@ export async function GET(request: NextRequest) {
 
     console.log('👥 Admin users request:', { search })
 
-    // Filter users based on search
-    const filteredUsers = search ? searchUsers(search) : getAllUsers()
+    // Filter regular users based on search (exclude admin)
+    const filteredUsers = search ? searchRegularUsers(search) : getRegularUsers()
 
     // Sort by creation date (newest first)
     filteredUsers.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

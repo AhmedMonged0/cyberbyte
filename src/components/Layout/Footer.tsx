@@ -20,27 +20,21 @@ export default function Footer() {
   const footerLinks = {
     company: [
       { name: 'About Us', href: '/about' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
-      { name: 'Blog', href: '/blog' },
     ],
     support: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'Contact Us', href: '/contact' },
-      { name: 'Shipping Info', href: '/shipping' },
-      { name: 'Returns', href: '/returns' },
+      { name: 'Contact Us', href: '/about' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
-      { name: 'GDPR', href: '/gdpr' },
+      { name: 'Privacy Policy', href: '/about' },
+      { name: 'Terms of Service', href: '/about' },
     ],
     categories: [
-      { name: 'Laptops', href: '/products?category=laptops' },
-      { name: 'Gaming PCs', href: '/products?category=gaming' },
-      { name: 'Accessories', href: '/products?category=accessories' },
-      { name: 'Components', href: '/products?category=components' },
+      { name: 'Laptops', href: '/products/laptops' },
+      { name: 'Monitors', href: '/products/monitors' },
+      { name: 'Accessories', href: '/products/accessories' },
+      { name: 'Components', href: '/products/components' },
+      { name: 'Peripherals', href: '/products/peripherals' },
+      { name: 'Storage', href: '/products/storage' },
     ],
   };
 

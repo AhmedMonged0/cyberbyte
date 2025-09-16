@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
@@ -14,14 +14,11 @@ import {
   Filter,
   Grid,
   List,
-  Star,
   TrendingUp,
   Clock,
   Users,
-  ShoppingCart,
   ArrowRight,
   Zap,
-  Shield,
   Award
 } from 'lucide-react';
 
@@ -52,7 +49,6 @@ export default function CategoriesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('featured');
   const [filterBy, setFilterBy] = useState('all');
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
   const categories: Category[] = [
     {
@@ -193,23 +189,6 @@ export default function CategoriesPage() {
     }
   });
 
-  const getBadgeColor = (type: string) => {
-    switch (type) {
-      case 'featured': return 'from-purple-500 to-pink-500';
-      case 'trending': return 'from-orange-500 to-red-500';
-      case 'new': return 'from-green-500 to-emerald-500';
-      default: return 'from-gray-500 to-gray-600';
-    }
-  };
-
-  const getBadgeIcon = (type: string) => {
-    switch (type) {
-      case 'featured': return Award;
-      case 'trending': return TrendingUp;
-      case 'new': return Zap;
-      default: return Star;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-primary-black">
@@ -337,8 +316,6 @@ export default function CategoriesPage() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                onHoverStart={() => setHoveredCategory(category.id)}
-                onHoverEnd={() => setHoveredCategory(null)}
                 className="group"
               >
                 <Link href={`/products/${category.id}`}>

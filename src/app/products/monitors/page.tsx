@@ -23,6 +23,7 @@ import { useCart } from '@/contexts/CartContext';
 interface Product {
   id: string;
   name: string;
+  description: string;
   price: number;
   originalPrice: number | null;
   rating: number;

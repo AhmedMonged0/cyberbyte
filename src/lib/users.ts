@@ -70,3 +70,23 @@ export function searchRegularUsers(search: string): User[] {
     user.email.toLowerCase().includes(searchLower)
   )
 }
+
+// Delete user by ID (only regular users, not admin)
+export function deleteUser(userId: string): { success: boolean; message: string } {
+  const userIndex = realUsers.findIndex(user => user.id === userId && user.role === 'user')
+  
+  if (userIndex === -1) {
+    return { success: false, message: 'المستخدم غير موجود أو لا يمكن حذفه' }
+  }
+  
+  const deletedUser = realUsers[userIndex]
+  realUsers.splice(userIndex, 1)
+  
+  console.log('🗑️ User deleted:', deletedUser.email)
+  return { success: true, message: 'تم حذف المستخدم بنجاح' }
+}
+
+// Get user by ID
+export function getUserById(userId: string): User | undefined {
+  return realUsers.find(user => user.id === userId)
+}

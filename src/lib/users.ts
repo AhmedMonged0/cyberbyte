@@ -10,7 +10,7 @@ export interface User {
 }
 
 // Real users storage (in memory for now)
-let realUsers: User[] = [
+const realUsers: User[] = [
   {
     id: '1',
     firstName: 'Admin',

@@ -117,3 +117,22 @@ export async function sendPasswordResetCode(email: string, resetCode: string) {
     return false
   }
 }
+
+// دالة عامة لإرسال البريد الإلكتروني
+export async function sendEmail(to: string, subject: string, html: string) {
+  const mailOptions = {
+    from: process.env.SMTP_FROM || 'CyberByte <noreply@cyberbyte.com>',
+    to,
+    subject,
+    html,
+  }
+
+  try {
+    await transporter.sendMail(mailOptions)
+    console.log(`✅ Email sent to: ${to}`)
+    return true
+  } catch (error) {
+    console.error('❌ Error sending email:', error)
+    return false
+  }
+}

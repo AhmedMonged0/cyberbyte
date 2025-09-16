@@ -41,6 +41,7 @@ export default function RegisterPage() {
     }
   };
 
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 

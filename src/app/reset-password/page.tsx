@@ -111,7 +111,10 @@ export default function ResetPasswordPage() {
       const response = await fetch('/api/auth/verify-reset-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: formData.code.toUpperCase() })
+        body: JSON.stringify({ 
+          code: formData.code.toUpperCase(),
+          email: formData.email
+        })
       })
 
       const data = await response.json()

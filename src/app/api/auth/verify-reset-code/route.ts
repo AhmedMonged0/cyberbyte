@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
 import { updateResetCodeWithToken, verifyResetCodeForProduction } from '@/lib/reset-codes'
+import { storeResetToken } from '@/lib/shared-storage'
 import { z } from 'zod'
 import crypto from 'crypto'
 
@@ -49,6 +50,9 @@ export async function POST(request: NextRequest) {
 
     // Update reset data with access token
     updateResetCodeWithToken(email, accessToken, 15) // 15 minutes
+
+    // Store reset token for password update
+    storeResetToken(accessToken, user.id, user.email, 15) // 15 minutes
 
     console.log('✅ Reset code verified successfully for:', email)
 

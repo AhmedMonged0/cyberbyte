@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
+import { findUserByEmail, updateUserPassword } from '@/lib/users'
+import { getResetToken, deleteResetToken } from '@/lib/shared-storage'
 
 const updatePasswordSchema = z.object({
   token: z.string().min(1, 'Token is required'),
@@ -17,44 +17,46 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { token, password } = updatePasswordSchema.parse(body)
 
-    // البحث عن الـ token في قاعدة البيانات
-    const resetToken = await prisma.resetToken.findFirst({
-      where: {
-        token: token,
-        expiresAt: {
-          gt: new Date() // الـ token لم ينته صلاحيته
-        }
-      },
-      include: {
-        user: true
-      }
-    })
+    console.log('🔐 Update password request:', { token: token.substring(0, 10) + '...', passwordLength: password.length })
 
-    if (!resetToken) {
+    // البحث عن الـ token في التخزين المؤقت
+    const resetTokenData = getResetToken(token)
+
+    if (!resetTokenData) {
+      console.log('❌ Token not found:', token.substring(0, 10) + '...')
       return NextResponse.json({
         success: false,
         message: 'الرابط غير صحيح أو منتهي الصلاحية'
       }, { status: 400 })
     }
 
-    // تشفير كلمة المرور الجديدة
-    const hashedPassword = await bcrypt.hash(password, 12)
+    // التحقق من انتهاء صلاحية الـ token
+    if (resetTokenData.expiresAt < new Date()) {
+      console.log('❌ Token expired:', resetTokenData.expiresAt)
+      deleteResetToken(token)
+      return NextResponse.json({
+        success: false,
+        message: 'الرابط منتهي الصلاحية'
+      }, { status: 400 })
+    }
 
-    // تحديث كلمة المرور
-    await prisma.user.update({
-      where: { id: resetToken.userId },
-      data: { password: hashedPassword }
-    })
+    // البحث عن المستخدم
+    const user = findUserByEmail(resetTokenData.email)
+    if (!user) {
+      console.log('❌ User not found:', resetTokenData.email)
+      return NextResponse.json({
+        success: false,
+        message: 'المستخدم غير موجود'
+      }, { status: 400 })
+    }
+
+    // تحديث كلمة المرور (بدون تشفير للبساطة)
+    updateUserPassword(user.id, password)
 
     // حذف الـ token المستخدم
-    await prisma.resetToken.delete({
-      where: { id: resetToken.id }
-    })
+    deleteResetToken(token)
 
-    // حذف جميع الـ tokens الأخرى للمستخدم (لأمان إضافي)
-    await prisma.resetToken.deleteMany({
-      where: { userId: resetToken.userId }
-    })
+    console.log('✅ Password updated successfully for:', user.email)
 
     return NextResponse.json({
       success: true,
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Update password error:', error)
+    console.error('❌ Update password error:', error)
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(

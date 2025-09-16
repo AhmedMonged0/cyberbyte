@@ -90,3 +90,17 @@ export function deleteUser(userId: string): { success: boolean; message: string 
 export function getUserById(userId: string): User | undefined {
   return realUsers.find(user => user.id === userId)
 }
+
+// Update user password
+export function updateUserPassword(userId: string, newPassword: string): { success: boolean; message: string } {
+  const userIndex = realUsers.findIndex(user => user.id === userId)
+  
+  if (userIndex === -1) {
+    return { success: false, message: 'المستخدم غير موجود' }
+  }
+  
+  realUsers[userIndex].password = newPassword
+  console.log('🔐 Password updated for user:', realUsers[userIndex].email)
+  
+  return { success: true, message: 'تم تحديث كلمة المرور بنجاح' }
+}

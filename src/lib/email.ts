@@ -14,13 +14,19 @@ const transporter = nodemailer.createTransport({
 
 
 export async function sendPasswordResetCode(email: string, resetCode: string) {
-  // في بيئة التطوير، نطبع الكود في الكونسول أيضاً
+  // في بيئة التطوير، نطبع الكود في الكونسول
+  console.log('🔑 Password Reset Code (Development Mode):')
+  console.log(`📧 Email: ${email}`)
+  console.log(`🔐 Reset Code: ${resetCode}`)
+  console.log('📝 Note: In production, this code would be sent via email')
+  
+  // في بيئة التطوير، نرجع true مباشرة
   if (process.env.NODE_ENV === 'development') {
-    console.log('🔑 Password Reset Code (Development Mode):')
-    console.log(`Email: ${email}`)
-    console.log(`Reset Code: ${resetCode}`)
+    console.log('✅ Email simulation successful (Development Mode)')
+    return true
   }
   
+  // في بيئة الإنتاج، نحاول إرسال الإيميل فعلياً
   const mailOptions = {
     from: process.env.SMTP_FROM || 'CyberByte <noreply@cyberbyte.com>',
     to: email,
@@ -109,10 +115,10 @@ export async function sendPasswordResetCode(email: string, resetCode: string) {
 
   try {
     await transporter.sendMail(mailOptions)
-    console.log(`Password reset code sent to: ${email}`)
+    console.log(`✅ Password reset code sent to: ${email}`)
     return true
   } catch (error) {
-    console.error('Error sending email:', error)
+    console.error('❌ Error sending email:', error)
     return false
   }
 }

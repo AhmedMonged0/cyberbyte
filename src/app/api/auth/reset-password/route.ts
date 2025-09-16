@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
+import { sendPasswordResetCode } from '@/lib/email'
 import { z } from 'zod'
 import crypto from 'crypto'
 
@@ -41,12 +42,22 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Reset code generated for:', email, 'Code:', resetCode)
 
-    // For now, just return success (in real app, send email)
-    // const emailSent = await sendPasswordResetCode(email, resetCode)
+    // Send reset code via email
+    const emailSent = await sendPasswordResetCode(email, resetCode)
+
+    if (!emailSent) {
+      console.log('❌ Failed to send email to:', email)
+      return NextResponse.json(
+        { error: 'Failed to send reset email. Please try again.' },
+        { status: 500 }
+      )
+    }
+
+    console.log('✅ Reset code sent successfully to:', email)
 
     return NextResponse.json({
       message: 'If an account with that email exists, we sent a password reset code.',
-      // For development only - remove in production
+      // For development only - show code in console and response
       resetCode: process.env.NODE_ENV === 'development' ? resetCode : undefined
     })
 

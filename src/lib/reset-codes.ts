@@ -68,17 +68,26 @@ export function deleteResetCode(email: string): void {
 // For Vercel/production: Simple validation without persistent storage
 // This is a temporary solution - in production, use a database
 export function verifyResetCodeForProduction(email: string, code: string): { valid: boolean; message: string } {
-  // For production, we'll use a simple validation
-  // In a real app, this should check against a database
+  console.log('🔐 Production reset code verification:', { email, code })
   
-  // Check if code is 6 characters and alphanumeric
-  if (!code || code.length !== 6 || !/^[A-F0-9]{6}$/.test(code)) {
-    return { valid: false, message: 'الكود يجب أن يكون 6 أحرف' }
+  // Check if code exists and is not empty
+  if (!code || code.trim().length === 0) {
+    return { valid: false, message: 'الكود مطلوب' }
+  }
+  
+  // Check if code is 6 characters
+  if (code.length !== 6) {
+    return { valid: false, message: 'الكود يجب أن يكون 6 أحرف بالضبط' }
+  }
+  
+  // Check if code contains only valid characters (letters and numbers)
+  if (!/^[A-Za-z0-9]{6}$/.test(code)) {
+    return { valid: false, message: 'الكود يجب أن يحتوي على أحرف وأرقام فقط' }
   }
   
   // For demo purposes, accept any 6-character alphanumeric code
   // In production, this should validate against stored codes
-  console.log('🔐 Production reset code verification:', { email, code })
+  console.log('✅ Production reset code accepted:', { email, code })
   
   return { valid: true, message: 'الكود صحيح' }
 }

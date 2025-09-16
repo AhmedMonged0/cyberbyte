@@ -5,16 +5,20 @@ import { z } from 'zod'
 import crypto from 'crypto'
 
 const verifyCodeSchema = z.object({
-  code: z.string().length(6, 'Code must be 6 characters'),
+  code: z.string().min(1, 'Code is required').max(10, 'Code too long'),
   email: z.string().email('Invalid email address'),
 })
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔐 Verify reset code API called')
+    
     const body = await request.json()
+    console.log('📝 Request body:', { ...body, code: body.code ? '***' : 'undefined' })
+    
     const { code, email } = verifyCodeSchema.parse(body)
 
-    console.log('🔐 Verify reset code request:', { code, email })
+    console.log('🔐 Verify reset code request:', { code: code ? '***' : 'undefined', email })
 
     // Check if user exists
     const user = findUserByEmail(email)
@@ -62,6 +66,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ Verify reset code error:', error)
     
     if (error instanceof z.ZodError) {
+      console.log('❌ Zod validation error:', error.issues)
       return NextResponse.json(
         { 
           success: false,
@@ -72,6 +77,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log('❌ General error:', error)
     return NextResponse.json({
       success: false,
       message: 'حدث خطأ في الخادم',

@@ -176,7 +176,6 @@ html {
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 /* Force dark mode from the start */
@@ -206,7 +205,6 @@ body {
   font-family: 'Poppins', sans-serif;
   background: var(--primary-black) !important;
   color: var(--text-primary) !important;
-  overflow-x: hidden;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -473,11 +471,10 @@ html.dark * {
 /* Fix overflow issues */
 .container {
   max-width: 100%;
-  overflow-x: hidden;
 }
 
-/* Ensure no horizontal scroll */
-* {
+/* Ensure no horizontal scroll for specific elements */
+img, video, iframe {
   max-width: 100%;
 }
 
@@ -494,4 +491,38 @@ html.dark * {
 p, span, div {
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+/* Fix scrolling behavior */
+html, body {
+  scroll-behavior: smooth;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+/* Ensure proper scrolling on main content */
+main {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+/* Fix any potential scroll issues with sections */
+section {
+  overflow: visible;
+}
+
+/* Ensure proper scrolling for product pages */
+.products-page {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+/* Fix scrolling for product grid */
+.products-grid {
+  overflow: visible;
+}
+
+/* Ensure smooth scrolling for all content */
+* {
+  scroll-behavior: smooth;
 }

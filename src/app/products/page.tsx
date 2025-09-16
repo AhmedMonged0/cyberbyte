@@ -162,7 +162,7 @@ export default function ProductsPage() {
   const paginatedProducts = products;
 
   return (
-    <div className="min-h-screen bg-primary-black">
+    <div className="min-h-screen bg-primary-black products-page">
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-to-br from-primary-black to-primary-black-secondary">
         <div className="container mx-auto px-4">
@@ -450,11 +450,11 @@ export default function ProductsPage() {
             </div>
 
             {/* Products Grid/List */}
-            <div className={
+            <div className={`products-grid ${
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'
                 : 'space-y-6'
-            }>
+            }`}>
               {isLoading ? (
                 <div className="col-span-full flex justify-center items-center py-20">
                   <div className="text-center">

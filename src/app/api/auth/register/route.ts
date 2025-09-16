@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { addUser, findUserByEmail } from '@/lib/users'
 
 const registerSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -7,26 +8,6 @@ const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
-
-// Mock users storage (in real app, this would be a database)
-const mockUsers = [
-  {
-    id: '1',
-    email: 'admin@cyberbyte.com',
-    password: 'admin123',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'admin'
-  },
-  {
-    id: '2',
-    email: 'user@cyberbyte.com',
-    password: 'user123',
-    firstName: 'Test',
-    lastName: 'User',
-    role: 'user'
-  }
-]
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +19,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ Parsed data:', { firstName, lastName, email });
 
     // Check if user already exists
-    const existingUser = mockUsers.find(u => u.email === email)
+    const existingUser = findUserByEmail(email)
 
     if (existingUser) {
       console.log('❌ User already exists:', email);
@@ -49,17 +30,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new user
-    const newUser = {
-      id: (mockUsers.length + 1).toString(),
+    const newUser = addUser({
       firstName,
       lastName,
       email,
       password, // In real app, this would be hashed
       role: 'user'
-    }
-
-    // Add to mock users (in real app, this would be saved to database)
-    // mockUsers.push(newUser) // Commented out since mockUsers is const
+    })
 
     console.log('✅ User created:', { id: newUser.id, email: newUser.email });
 

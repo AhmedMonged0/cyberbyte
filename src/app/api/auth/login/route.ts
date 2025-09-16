@@ -1,30 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { findUserByEmail } from '@/lib/users'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
 })
-
-// Mock users for testing
-const mockUsers = [
-  {
-    id: '1',
-    email: 'admin@cyberbyte.com',
-    password: 'admin123', // In real app, this would be hashed
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'admin'
-  },
-  {
-    id: '2',
-    email: 'user@cyberbyte.com',
-    password: 'user123',
-    firstName: 'Test',
-    lastName: 'User',
-    role: 'user'
-  }
-]
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +15,7 @@ export async function POST(request: NextRequest) {
     console.log('🔐 Login attempt:', { email, password: '***' })
 
     // Find user by email
-    const user = mockUsers.find(u => u.email === email)
+    const user = findUserByEmail(email)
 
     if (!user) {
       console.log('❌ User not found:', email)

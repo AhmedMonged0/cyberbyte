@@ -14,17 +14,12 @@ const transporter = nodemailer.createTransport({
 
 
 export async function sendPasswordResetCode(email: string, resetCode: string) {
-  // في بيئة التطوير، نطبع الكود في الكونسول
-  console.log('🔑 Password Reset Code (Development Mode):')
+  // Always log the code for debugging
+  console.log('🔑 Password Reset Code:')
   console.log(`📧 Email: ${email}`)
   console.log(`🔐 Reset Code: ${resetCode}`)
-  console.log('📝 Note: In production, this code would be sent via email')
   
-  // في بيئة التطوير، نرجع true مباشرة
-  if (process.env.NODE_ENV === 'development') {
-    console.log('✅ Email simulation successful (Development Mode)')
-    return true
-  }
+  // Always try to send real email
   
   // في بيئة الإنتاج، نحاول إرسال الإيميل فعلياً
   const mailOptions = {

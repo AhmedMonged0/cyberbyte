@@ -7,8 +7,16 @@ export interface ResetTokenData {
   expiresAt: Date
 }
 
-// Global storage objects
-export const resetTokens = new Map<string, ResetTokenData>()
+// Global storage objects using global scope
+declare global {
+  var __cyberbyte_tokens: Map<string, ResetTokenData> | undefined
+}
+
+if (!global.__cyberbyte_tokens) {
+  global.__cyberbyte_tokens = new Map()
+}
+
+export const resetTokens = global.__cyberbyte_tokens
 
 // Reset token functions
 export function storeResetToken(token: string, userId: string, email: string, expiresInMinutes: number = 15): void {

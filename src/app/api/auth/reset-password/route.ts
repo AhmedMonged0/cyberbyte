@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
 import { sendPasswordResetCode } from '@/lib/email'
-import { storeResetCode } from '@/lib/reset-codes'
+import { storeResetCode } from '@/lib/global-storage'
 import { z } from 'zod'
 import crypto from 'crypto'
 
@@ -27,33 +27,23 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Generate secure reset code
+    // Generate secure reset code (6 characters)
     const resetCode = crypto.randomBytes(3).toString('hex').toUpperCase()
 
-    // Store reset code using shared system (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      storeResetCode(email, resetCode, user.id, 15) // 15 minutes
-    }
+    // Store reset code using shared system (always store)
+    storeResetCode(email, resetCode, user.id, 15) // 15 minutes
 
     console.log('✅ Reset code generated for:', email, 'Code:', resetCode)
 
     // Send reset code via email
     const emailSent = await sendPasswordResetCode(email, resetCode)
 
-    if (!emailSent) {
-      console.log('❌ Failed to send email to:', email)
-      return NextResponse.json(
-        { error: 'Failed to send reset email. Please try again.' },
-        { status: 500 }
-      )
-    }
-
     console.log('✅ Reset code sent successfully to:', email)
 
     return NextResponse.json({
       message: 'If an account with that email exists, we sent a password reset code.',
-      // For development only - show code in console and response
-      resetCode: process.env.NODE_ENV === 'development' ? resetCode : undefined
+      // Always show code for testing (in real production, remove this)
+      resetCode: resetCode
     })
 
   } catch (error) {

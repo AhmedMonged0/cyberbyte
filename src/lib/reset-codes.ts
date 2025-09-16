@@ -22,6 +22,8 @@ export function storeResetCode(email: string, code: string, userId: string, expi
     userId
   })
   console.log('✅ Reset code stored for:', email, 'Code:', code, 'Expires:', expiresAt)
+  console.log('🔍 Current reset codes count:', resetCodes.size)
+  console.log('🔍 All stored codes:', Array.from(resetCodes.entries()))
 }
 
 export function getResetCode(email: string): ResetCodeData | undefined {
@@ -65,10 +67,11 @@ export function deleteResetCode(email: string): void {
   console.log('🗑️ Reset code deleted for:', email)
 }
 
-// For Vercel/production: Simple validation without persistent storage
-// This is a temporary solution - in production, use a database
+// Real reset code verification - checks against stored codes
 export function verifyResetCodeForProduction(email: string, code: string): { valid: boolean; message: string } {
-  console.log('🔐 Production reset code verification:', { email, code })
+  console.log('🔐 Real reset code verification:', { email, code })
+  console.log('🔍 Current reset codes count:', resetCodes.size)
+  console.log('🔍 All stored codes:', Array.from(resetCodes.entries()))
   
   // Check if code exists and is not empty
   if (!code || code.trim().length === 0) {
@@ -91,9 +94,26 @@ export function verifyResetCodeForProduction(email: string, code: string): { val
     return { valid: false, message: 'الكود يجب أن يحتوي على أحرف وأرقام فقط' }
   }
   
-  // For demo purposes, accept any 6-character alphanumeric code
-  // In production, this should validate against stored codes
-  console.log('✅ Production reset code accepted:', { email, code: trimmedCode })
+  // Check against stored reset codes
+  const storedCodeData = resetCodes.get(email)
+  if (!storedCodeData) {
+    console.log('❌ No reset code found for email:', email)
+    return { valid: false, message: 'لم يتم العثور على كود إعادة تعيين لهذا البريد الإلكتروني' }
+  }
   
+  // Check if code matches
+  if (storedCodeData.code !== trimmedCode) {
+    console.log('❌ Code mismatch:', { stored: storedCodeData.code, provided: trimmedCode })
+    return { valid: false, message: 'الكود غير صحيح' }
+  }
+  
+  // Check if code is expired
+  if (storedCodeData.expiresAt < new Date()) {
+    console.log('❌ Code expired:', storedCodeData.expiresAt)
+    resetCodes.delete(email) // Clean up expired code
+    return { valid: false, message: 'الكود منتهي الصلاحية' }
+  }
+  
+  console.log('✅ Reset code verified successfully:', { email, code: trimmedCode })
   return { valid: true, message: 'الكود صحيح' }
 }

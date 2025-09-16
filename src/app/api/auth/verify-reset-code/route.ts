@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
-import { updateResetCodeWithToken, verifyResetCodeForProduction } from '@/lib/reset-codes'
+import { verifyResetCode } from '@/lib/global-storage'
 import { storeResetToken } from '@/lib/shared-storage'
 import { z } from 'zod'
 import crypto from 'crypto'
@@ -31,10 +31,9 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Verify reset code using appropriate system
-    // For now, use production system for both dev and prod
+    // Verify reset code using global storage
     console.log('🔍 Verifying code:', { code, codeLength: code.length, codeType: typeof code })
-    const verification = verifyResetCodeForProduction(email, code)
+    const verification = verifyResetCode(email, code)
     console.log('🔍 Verification result:', verification)
       
     if (!verification.valid) {
@@ -48,8 +47,9 @@ export async function POST(request: NextRequest) {
     // Generate access token for password change
     const accessToken = crypto.randomBytes(32).toString('hex')
 
-    // Update reset data with access token
-    updateResetCodeWithToken(email, accessToken, 15) // 15 minutes
+    // Delete the used reset code
+    const { deleteResetCode } = await import('@/lib/global-storage')
+    deleteResetCode(email)
 
     // Store reset token for password update
     storeResetToken(accessToken, user.id, user.email, 15) // 15 minutes

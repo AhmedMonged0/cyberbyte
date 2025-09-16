@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
-import { verifyResetCode, updateResetCodeWithToken, verifyResetCodeForProduction } from '@/lib/reset-codes'
+import { updateResetCodeWithToken, verifyResetCodeForProduction } from '@/lib/reset-codes'
 import { z } from 'zod'
 import crypto from 'crypto'
 

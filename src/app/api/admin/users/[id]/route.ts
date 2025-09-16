@@ -3,10 +3,10 @@ import { deleteUser, getUserById } from '@/lib/users'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id
+    const { id: userId } = await params
 
     console.log('🗑️ Admin delete user request:', { userId })
 

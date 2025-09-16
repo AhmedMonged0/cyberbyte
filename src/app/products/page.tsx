@@ -71,67 +71,45 @@ export default function ProductsPage() {
     return productImage?.main || getFallbackImage(product.category);
   };
 
-  // Fetch products from API with retry logic
+  // Fetch products from API
   useEffect(() => {
-    const fetchProducts = async (retryCount = 0) => {
+    const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        setError(null); // Clear previous errors
+        setError(null);
         
-        const params = new URLSearchParams({
-          page: currentPage.toString(),
-          limit: '12',
-          ...(searchQuery && { search: searchQuery }),
-          ...(selectedCategory && selectedCategory !== 'all' && { category: selectedCategory }),
-          ...(sortBy && { sortBy }),
-          ...(sortOrder && { sortOrder })
-        });
-
-        console.log('Fetching products with params:', params.toString(), 'Retry:', retryCount);
+        console.log('🔄 Fetching products...');
         
-        const response = await fetch(`/api/products?${params}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        console.log('Response status:', response.status);
+        const response = await fetch('/api/products?limit=12');
+        console.log('📡 Response status:', response.status);
         
         if (!response.ok) {
-          const errorData = await response.json();
-          console.error('API Error:', errorData);
-          throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        console.log('Products data:', data);
+        console.log('📦 Products received:', data.products?.length || 0, 'products');
+        console.log('📊 Full data:', data);
         
-        setProducts(data.products || []);
-        setFilteredProducts(data.products || []);
-        setTotalPages(data.pagination?.totalPages || 1);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        
-        // Retry logic - retry up to 3 times with exponential backoff
-        if (retryCount < 3) {
-          console.log(`Retrying in ${Math.pow(2, retryCount) * 1000}ms...`);
-          setTimeout(() => {
-            fetchProducts(retryCount + 1);
-          }, Math.pow(2, retryCount) * 1000);
-          return;
+        if (data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+          setFilteredProducts(data.products);
+          setTotalPages(data.pagination?.totalPages || 1);
+          console.log('✅ Products set successfully');
+        } else {
+          console.error('❌ Invalid products data:', data);
+          setError('Invalid products data received');
         }
-        
+      } catch (err) {
+        console.error('❌ Error fetching products:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
-        if (retryCount === 0) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
     fetchProducts();
-  }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder]);
+  }, []);
 
   // Remove the old filter logic since we're now filtering on the server side
   // The API handles all filtering and sorting

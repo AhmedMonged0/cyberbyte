@@ -74,6 +74,8 @@ export default function MonitorsPage() {
         setIsLoading(true);
         setError(null);
         
+        console.log('🔄 Fetching monitors...');
+        
         const response = await fetch('/api/products?category=monitors', {
           method: 'GET',
           headers: {
@@ -81,15 +83,24 @@ export default function MonitorsPage() {
           },
         });
         
+        console.log('📡 Response status:', response.status);
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        setProducts(data.products || []);
-        setFilteredProducts(data.products || []);
+        console.log('📦 Monitors received:', data.products?.length || 0, 'products');
+        
+        if (data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+          setFilteredProducts(data.products);
+          console.log('✅ Monitors set successfully');
+        } else {
+          setError('Invalid products data received');
+        }
       } catch (err) {
-        console.error('Error fetching products:', err);
+        console.error('❌ Error fetching monitors:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
         setIsLoading(false);

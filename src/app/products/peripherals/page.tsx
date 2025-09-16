@@ -75,6 +75,8 @@ export default function PeripheralsPage() {
         setIsLoading(true);
         setError(null);
         
+        console.log('🔄 Fetching peripherals...');
+        
         const response = await fetch('/api/products?category=peripherals', {
           method: 'GET',
           headers: {
@@ -82,15 +84,24 @@ export default function PeripheralsPage() {
           },
         });
         
+        console.log('📡 Response status:', response.status);
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        setProducts(data.products || []);
-        setFilteredProducts(data.products || []);
+        console.log('📦 Peripherals received:', data.products?.length || 0, 'products');
+        
+        if (data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+          setFilteredProducts(data.products);
+          console.log('✅ Peripherals set successfully');
+        } else {
+          setError('Invalid products data received');
+        }
       } catch (err) {
-        console.error('Error fetching products:', err);
+        console.error('❌ Error fetching peripherals:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
         setIsLoading(false);

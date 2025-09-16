@@ -76,6 +76,8 @@ export default function StoragePage() {
         setIsLoading(true);
         setError(null);
         
+        console.log('🔄 Fetching storage...');
+        
         const response = await fetch('/api/products?category=storage', {
           method: 'GET',
           headers: {
@@ -83,15 +85,24 @@ export default function StoragePage() {
           },
         });
         
+        console.log('📡 Response status:', response.status);
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        setProducts(data.products || []);
-        setFilteredProducts(data.products || []);
+        console.log('📦 Storage received:', data.products?.length || 0, 'products');
+        
+        if (data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+          setFilteredProducts(data.products);
+          console.log('✅ Storage set successfully');
+        } else {
+          setError('Invalid products data received');
+        }
       } catch (err) {
-        console.error('Error fetching products:', err);
+        console.error('❌ Error fetching storage:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
         setIsLoading(false);

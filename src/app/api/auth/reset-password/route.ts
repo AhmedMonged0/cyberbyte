@@ -30,8 +30,10 @@ export async function POST(request: NextRequest) {
     // Generate secure reset code
     const resetCode = crypto.randomBytes(3).toString('hex').toUpperCase()
 
-    // Store reset code using shared system
-    storeResetCode(email, resetCode, user.id, 15) // 15 minutes
+    // Store reset code using shared system (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      storeResetCode(email, resetCode, user.id, 15) // 15 minutes
+    }
 
     console.log('✅ Reset code generated for:', email, 'Code:', resetCode)
 

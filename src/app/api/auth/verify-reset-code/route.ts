@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findUserByEmail } from '@/lib/users'
-import { verifyResetCode, updateResetCodeWithToken } from '@/lib/reset-codes'
+import { verifyResetCode, updateResetCodeWithToken, verifyResetCodeForProduction } from '@/lib/reset-codes'
 import { z } from 'zod'
 import crypto from 'crypto'
 
@@ -26,8 +26,10 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Verify reset code using shared system
-    const verification = verifyResetCode(email, code)
+    // Verify reset code using appropriate system
+    // For now, use production system for both dev and prod
+    const verification = verifyResetCodeForProduction(email, code)
+      
     if (!verification.valid) {
       console.log('❌ Reset code verification failed:', verification.message)
       return NextResponse.json({

@@ -228,7 +228,7 @@ export default function ProductCategories() {
           ))}
         </motion.div>
 
-        {/* View All Button */}
+        {/* View All Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -236,15 +236,26 @@ export default function ProductCategories() {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <Link href="/products">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 glass-effect border border-accent-blue/30 text-white font-semibold rounded-lg hover:border-accent-blue hover:bg-accent-blue/10 transition-all duration-300"
-            >
-              View All Products
-            </motion.button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/products">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 glass-effect border border-accent-blue/30 text-white font-semibold rounded-lg hover:border-accent-blue hover:bg-accent-blue/10 transition-all duration-300"
+              >
+                View All Products
+              </motion.button>
+            </Link>
+            <Link href="/categories">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-accent-blue/25 transition-all duration-300"
+              >
+                Browse Categories
+              </motion.button>
+            </Link>
+          </div>
         </motion.div>
       </div>
     </section>

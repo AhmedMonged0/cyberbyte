@@ -275,18 +275,6 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 right-8 w-12 h-12 border-2 border-accent-blue rounded-full flex items-center justify-center"
-      >
-        <motion.div
-          animate={{ y: [0, 5, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-1 h-4 bg-accent-blue rounded-full"
-        />
-      </motion.div>
     </section>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ChevronRight, Play } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HeroSection() {
@@ -57,7 +57,103 @@ export default function HeroSection() {
   return (
     <section ref={containerRef} className="relative min-h-screen bg-gradient-tech z-0">
       {/* Animated Background */}
-      <div className="absolute inset-0 tech-pattern opacity-30" />
+      <div className="absolute inset-0 tech-pattern opacity-50" />
+      
+      {/* Enhanced Tech Lines */}
+      <div className="absolute inset-0 opacity-40">
+        <motion.div
+          className="w-full h-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(59, 130, 246, 0.4) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.4) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px, 50px 50px'
+          }}
+          animate={{
+            backgroundPosition: ['0 0, 0 0', '50px 50px, 50px 50px', '0 0, 0 0']
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      </div>
+
+      {/* تيارات نيون متحركة */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* تيارات عمودية */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`vertical-stream-${i}`}
+            className="absolute w-1 h-full"
+            style={{
+              left: `${(i + 1) * 12.5}%`,
+              background: 'linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.8), transparent)',
+              boxShadow: '0 0 10px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4)'
+            }}
+            animate={{
+              y: ['-100%', '100%'],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+
+        {/* تيارات أفقية */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`horizontal-stream-${i}`}
+            className="absolute h-1 w-full"
+            style={{
+              top: `${(i + 1) * 16}%`,
+              background: 'linear-gradient(to right, transparent, rgba(147, 51, 234, 0.8), transparent)',
+              boxShadow: '0 0 10px rgba(147, 51, 234, 0.6), 0 0 20px rgba(147, 51, 234, 0.4)'
+            }}
+            animate={{
+              x: ['-100%', '100%'],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 4 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 4,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+
+        {/* تيارات قطرية */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={`diagonal-stream-${i}`}
+            className="absolute w-1 h-full"
+            style={{
+              left: `${20 + i * 20}%`,
+              background: 'linear-gradient(45deg, transparent, rgba(236, 72, 153, 0.8), transparent)',
+              boxShadow: '0 0 10px rgba(236, 72, 153, 0.6), 0 0 20px rgba(236, 72, 153, 0.4)',
+              transform: 'rotate(45deg)',
+              transformOrigin: 'top'
+            }}
+            animate={{
+              y: ['-100%', '100%'],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 5 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </div>
       
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -139,12 +235,12 @@ export default function HeroSection() {
                 ))}
               </motion.div>
 
-              {/* CTA Buttons */}
+              {/* CTA Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
-                className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
+                className="flex justify-center mb-16"
               >
                 <Link href="/products">
                 <motion.button
@@ -156,15 +252,6 @@ export default function HeroSection() {
                   <ChevronRight className="w-5 h-5" />
                 </motion.button>
                 </Link>
-                
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 glass-effect border border-accent-blue/30 text-white font-semibold rounded-lg hover:border-accent-blue transition-all duration-300 flex items-center space-x-2"
-                >
-                  <Play className="w-5 h-5" />
-                  <span>Watch Demo</span>
-                </motion.button>
               </motion.div>
 
             </motion.div>

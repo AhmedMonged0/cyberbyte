@@ -91,9 +91,19 @@ export default function Header({ onSearch }: HeaderProps) {
           <Link href="/" className="flex items-center space-x-2">
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
-              className="w-10 h-10 bg-gradient-neon rounded-lg flex items-center justify-center shadow-neon"
+              className="w-12 h-12 rounded-lg flex items-center justify-center shadow-neon overflow-hidden"
+              style={{ background: 'transparent' }}
             >
-              <span className="text-white font-orbitron font-bold text-xl">B</span>
+              <img 
+                src="/cyberbyte-logo.png" 
+                alt="CyberByte Logo" 
+                className="w-full h-full object-contain"
+                style={{ 
+                  background: 'transparent',
+                  backgroundColor: 'transparent',
+                  mixBlendMode: 'screen'
+                }}
+              />
             </motion.div>
             <span className="text-xl font-orbitron font-bold text-gradient-neon">
               CyberByte

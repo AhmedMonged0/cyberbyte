@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ Parsed data:', { firstName, lastName, email });
 
     // Check if user already exists
-    const existingUser = findUserByEmail(email)
+    const existingUser = await findUserByEmail(email)
 
     if (existingUser) {
       console.log('❌ User already exists:', email);
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new user
-    const newUser = addUser({
+    const newUser = await addUser({
       firstName,
       lastName,
       email,

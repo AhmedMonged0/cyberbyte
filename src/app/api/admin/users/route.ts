@@ -9,10 +9,7 @@ export async function GET(request: NextRequest) {
     console.log('👥 Admin users request:', { search })
 
     // Filter regular users based on search (exclude admin)
-    const filteredUsers = search ? searchRegularUsers(search) : getRegularUsers()
-
-    // Sort by creation date (newest first)
-    filteredUsers.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    const filteredUsers = search ? await searchRegularUsers(search) : await getRegularUsers()
 
     console.log('✅ Found users:', filteredUsers.length)
 

@@ -11,7 +11,7 @@ export async function DELETE(
     console.log('🗑️ Admin delete user request:', { userId })
 
     // Check if user exists
-    const user = getUserById(userId)
+    const user = await getUserById(userId)
     if (!user) {
       console.log('❌ User not found:', userId)
       return NextResponse.json({
@@ -30,7 +30,7 @@ export async function DELETE(
     }
 
     // Delete user
-    const result = deleteUser(userId)
+    const result = await deleteUser(userId)
     
     if (!result.success) {
       console.log('❌ Failed to delete user:', result.message)

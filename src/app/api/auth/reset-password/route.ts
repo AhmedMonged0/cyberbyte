@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     console.log('🔐 Reset password request for:', email)
 
     // Check if user exists
-    const user = findUserByEmail(email)
+    const user = await findUserByEmail(email)
 
     if (!user) {
       // Don't reveal if user exists or not for security

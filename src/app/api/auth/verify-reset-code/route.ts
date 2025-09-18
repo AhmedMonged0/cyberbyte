@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     console.log('🔐 Verify reset code request:', { code: code ? '***' : 'undefined', email })
 
     // Check if user exists
-    const user = findUserByEmail(email)
+    const user = await findUserByEmail(email)
     if (!user) {
       console.log('❌ User not found:', email)
       return NextResponse.json({

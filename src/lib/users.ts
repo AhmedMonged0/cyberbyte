@@ -9,98 +9,206 @@ export interface User {
   createdAt: string
 }
 
-// Real users storage (in memory for now)
-const realUsers: User[] = [
-  {
-    id: '1',
-    firstName: 'Admin',
-    lastName: 'User',
-    email: 'admin@cyberbyte.com',
-    password: 'admin123',
-    role: 'admin',
-    createdAt: new Date().toISOString()
-  }
-]
+import { prisma } from './prisma'
 
 // Functions to manage users
-export function addUser(userData: Omit<User, 'id' | 'createdAt'>): User {
-  const newUser: User = {
-    id: (realUsers.length + 1).toString(),
-    ...userData,
-    createdAt: new Date().toISOString()
+export async function addUser(userData: Omit<User, 'id' | 'createdAt'>): Promise<User> {
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+      }
+    })
+    
+    const user: User = {
+      id: newUser.id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      password: newUser.password,
+      role: 'user', // Default role for new users
+      createdAt: newUser.createdAt.toISOString()
+    }
+    
+    console.log('✅ New user added to database:', user.email)
+    return user
+  } catch (error) {
+    console.error('❌ Error adding user:', error)
+    throw error
   }
-  realUsers.push(newUser)
-  console.log('✅ New user added:', newUser.email)
-  return newUser
 }
 
-export function findUserByEmail(email: string): User | undefined {
-  return realUsers.find(u => u.email === email)
+export async function findUserByEmail(email: string): Promise<User | undefined> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email }
+    })
+    
+    if (!user) return undefined
+    
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+      role: 'user', // Default role for database users
+      createdAt: user.createdAt.toISOString()
+    }
+  } catch (error) {
+    console.error('❌ Error finding user by email:', error)
+    return undefined
+  }
 }
 
-export function getAllUsers(): User[] {
-  return realUsers
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' }
+    })
+    
+    return users.map(user => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+      role: 'user' as const,
+      createdAt: user.createdAt.toISOString()
+    }))
+  } catch (error) {
+    console.error('❌ Error getting all users:', error)
+    return []
+  }
 }
 
 // Get only regular users (exclude admin)
-export function getRegularUsers(): User[] {
-  return realUsers.filter(user => user.role === 'user')
+export async function getRegularUsers(): Promise<User[]> {
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' }
+    })
+    
+    return users.map(user => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+      role: 'user' as const,
+      createdAt: user.createdAt.toISOString()
+    }))
+  } catch (error) {
+    console.error('❌ Error getting regular users:', error)
+    return []
+  }
 }
 
-export function searchUsers(search: string): User[] {
-  if (!search) return realUsers
-  
-  const searchLower = search.toLowerCase()
-  return realUsers.filter(user => 
-    user.firstName.toLowerCase().includes(searchLower) ||
-    user.lastName.toLowerCase().includes(searchLower) ||
-    user.email.toLowerCase().includes(searchLower)
-  )
+export async function searchUsers(search: string): Promise<User[]> {
+  try {
+    if (!search) return await getAllUsers()
+    
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } }
+        ]
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+    
+    return users.map(user => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+      role: 'user' as const,
+      createdAt: user.createdAt.toISOString()
+    }))
+  } catch (error) {
+    console.error('❌ Error searching users:', error)
+    return []
+  }
 }
 
 // Search only regular users (exclude admin)
-export function searchRegularUsers(search: string): User[] {
-  const regularUsers = getRegularUsers()
-  if (!search) return regularUsers
-  
-  const searchLower = search.toLowerCase()
-  return regularUsers.filter(user => 
-    user.firstName.toLowerCase().includes(searchLower) ||
-    user.lastName.toLowerCase().includes(searchLower) ||
-    user.email.toLowerCase().includes(searchLower)
-  )
+export async function searchRegularUsers(search: string): Promise<User[]> {
+  return await searchUsers(search) // All users in database are regular users
 }
 
 // Delete user by ID (only regular users, not admin)
-export function deleteUser(userId: string): { success: boolean; message: string } {
-  const userIndex = realUsers.findIndex(user => user.id === userId && user.role === 'user')
-  
-  if (userIndex === -1) {
-    return { success: false, message: 'المستخدم غير موجود أو لا يمكن حذفه' }
+export async function deleteUser(userId: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+    
+    if (!user) {
+      return { success: false, message: 'المستخدم غير موجود أو لا يمكن حذفه' }
+    }
+    
+    await prisma.user.delete({
+      where: { id: userId }
+    })
+    
+    console.log('🗑️ User deleted from database:', user.email)
+    return { success: true, message: 'تم حذف المستخدم بنجاح' }
+  } catch (error) {
+    console.error('❌ Error deleting user:', error)
+    return { success: false, message: 'حدث خطأ في حذف المستخدم' }
   }
-  
-  const deletedUser = realUsers[userIndex]
-  realUsers.splice(userIndex, 1)
-  
-  console.log('🗑️ User deleted:', deletedUser.email)
-  return { success: true, message: 'تم حذف المستخدم بنجاح' }
 }
 
 // Get user by ID
-export function getUserById(userId: string): User | undefined {
-  return realUsers.find(user => user.id === userId)
+export async function getUserById(userId: string): Promise<User | undefined> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+    
+    if (!user) return undefined
+    
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+      role: 'user' as const,
+      createdAt: user.createdAt.toISOString()
+    }
+  } catch (error) {
+    console.error('❌ Error getting user by ID:', error)
+    return undefined
+  }
 }
 
 // Update user password
-export function updateUserPassword(userId: string, newPassword: string): { success: boolean; message: string } {
-  const userIndex = realUsers.findIndex(user => user.id === userId)
-  
-  if (userIndex === -1) {
-    return { success: false, message: 'المستخدم غير موجود' }
+export async function updateUserPassword(userId: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+    
+    if (!user) {
+      return { success: false, message: 'المستخدم غير موجود' }
+    }
+    
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: newPassword }
+    })
+    
+    console.log('🔐 Password updated for user:', user.email)
+    return { success: true, message: 'تم تحديث كلمة المرور بنجاح' }
+  } catch (error) {
+    console.error('❌ Error updating password:', error)
+    return { success: false, message: 'حدث خطأ في تحديث كلمة المرور' }
   }
-  
-  realUsers[userIndex].password = newPassword
-  console.log('🔐 Password updated for user:', realUsers[userIndex].email)
-  
-  return { success: true, message: 'تم تحديث كلمة المرور بنجاح' }
 }

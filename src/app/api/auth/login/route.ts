@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     console.log('🔐 Login attempt:', { email, password: '***' })
 
     // Find user by email
-    const user = findUserByEmail(email)
+    const user = await findUserByEmail(email)
 
     if (!user) {
       console.log('❌ User not found:', email)

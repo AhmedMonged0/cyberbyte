@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // البحث عن المستخدم
-    const user = findUserByEmail(resetTokenData.email)
+    const user = await findUserByEmail(resetTokenData.email)
     if (!user) {
       console.log('❌ User not found:', resetTokenData.email)
       return NextResponse.json({
@@ -51,7 +51,15 @@ export async function POST(request: NextRequest) {
     }
 
     // تحديث كلمة المرور (بدون تشفير للبساطة)
-    updateUserPassword(user.id, password)
+    const updateResult = await updateUserPassword(user.id, password)
+    
+    if (!updateResult.success) {
+      console.log('❌ Failed to update password:', updateResult.message)
+      return NextResponse.json({
+        success: false,
+        message: updateResult.message
+      }, { status: 400 })
+    }
 
     // حذف الـ token المستخدم
     deleteResetToken(token)
